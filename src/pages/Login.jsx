@@ -1,48 +1,58 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { usePayload } from "../hooks/usePayload";
+import API from "../lib/axiosLocal";
+import "../css/Login.css";
 
 const Login = () => {
-  const { login } = usePayload();
-
-  const [nombre, setNombre] = useState("");
+  const irA = useNavigate();
+  const [user, setUser] = useState("");
   const [contrasenia, setContrasenia] = useState("");
 
-  const navegar = useNavigate();
-
-  const manejadorSubir = (e) => {
-    e.preventDefault();
-
-    login(
-      { nombre, contrasenia },
-      {
-        onSuccess: () => {
-          navegar("/Bienvenido");
-        },
-        onError: (error) => {
-          // Handle login error (show message to user)
-          console.error(error);
-        },
+  const enviar = async () => {
+    try {
+      const respuesta = await API.post("/login", { user, contrasenia });
+      if (respuesta.status === 200) {
+        irA("/home");
       }
-    );
+    } catch (e) {
+      console.error(e);
+      alert("Contraseña incorrecta");
+    }
   };
 
   return (
-    <form onSubmit={manejadorSubir}>
-      <input
-        type="text"
-        placeholder="nombre"
-        value={nombre}
-        onChange={(e) => setNombre(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="contrasenia"
-        value={contrasenia}
-        onChange={(e) => setContrasenia(e.target.value)}
-      />
-      <button>Entrar</button>
-    </form>
+    <div className="login">
+      <div className="caja-form">
+        <h1 className="h1-Inicio">Iniciar Sesion</h1>
+        <form>
+          <label className="label-form">Usuario:</label>
+          <input
+            className="input-form"
+            type="text"
+            placeholder="Nombre"
+            value={user}
+            onChange={(e) => setUser(e.target.value)}
+          />
+          <label className="label-form">Contraseña: </label>
+          <input
+            className="input-form"
+            type="password"
+            placeholder="Contraseña"
+            value={contrasenia}
+            onChange={(e) => setContrasenia(e.target.value)}
+          />
+          <button
+            className="boton-form"
+            onClick={(e) => {
+              e.preventDefault();
+              enviar();
+            }}
+          >
+            Enviar
+          </button>
+        </form>
+      </div>
+    </div>
   );
 };
 

@@ -1,0 +1,120 @@
+/* Asegura que toda la pantalla esté cubierta */
+/* html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+} */
+
+/* Fuerza que el layout ocupe todo */
+.layout {
+  display: flex;
+  min-height: 100vh; /* Ocupa toda la altura */
+  width: 100vw; /* Ocupa todo el ancho */
+  background: #f5f7fa;
+  font-family: Arial, sans-serif;
+}
+
+/* Contenedor principal */
+.productos-container {
+  background-color: #f5f6fa;
+  min-height: 100vh;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+/* Encabezado */
+.productos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.productos-header h1 {
+  font-size: 28px;
+  color: #1d4ed8; /* Azul */
+}
+
+.productos-header button {
+  background-color: #2563eb;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.productos-header button:hover {
+  background-color: #1e40af;
+}
+
+/* Grid de productos */
+.productos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* Card de producto */
+.producto-card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.producto-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.15);
+}
+
+.producto-card h2 {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.producto-card .descripcion {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.producto-card .precio {
+  font-size: 18px;
+  font-weight: bold;
+  color: #16a34a; /* Verde */
+  margin-bottom: 10px;
+}
+
+.estado {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.estado.activo {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.estado.inactivo {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+/* Estado cargando */
+.loading {
+  text-align: center;
+  margin-top: 50px;
+  font-size: 20px;
+  color: #555;
+}
