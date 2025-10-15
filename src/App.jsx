@@ -13,6 +13,8 @@ import Menu from "./pages/autentificacion/Menu.jsx";
 import SoloAdmin from "./pages/autentificacion/permisos/SoloAdmin.jsx";
 import AccesosVendedor from "./pages/autentificacion/permisos/AccesosVendedor.jsx";
 import AccesosBodeguero from "./pages/autentificacion/permisos/AccesosBodeguero.jsx";
+import ReportesCompras from "./pages/reportes/ReportesCompras.jsx";
+import ReportesVentas from "./pages/reportes/ReportesVentas.jsx";
 import { Route, Routes } from "react-router-dom";
 
 function App() {
@@ -20,10 +22,13 @@ function App() {
     <Routes>
       <Route path="/login" element={<Login></Login>}></Route>
       <Route path="/" element={<Menu />}>
-        {/* Empleados */}
         <Route element={<SoloAdmin />}>
+          {/* Empleados */}
           <Route index={true} element={<Empleados />} />
           <Route path="empleados/crear" element={<CrearEmpleado />} />
+          {/* reportes */}
+          <Route path="reportes/ventas" element={<ReportesVentas />} />
+          <Route path="reportes/compras" element={<ReportesCompras />} />
         </Route>
         <Route element={<AccesosBodeguero />}>
           {/* Productos */}

@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 const SoloAdmin = () => {
   const { data, isLoading } = useAutentificacion();
   if (isLoading) return null;
-  if (data?.usuarioActual?.rol != "Administrador")
+  if (data?.usuario?.rol != "Administrador")
     return (
       <main>
         <h1>Solo los administradores pueden acceder a este modulo...</h1>

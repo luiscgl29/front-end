@@ -5,8 +5,8 @@ const AccesosBodeguero = () => {
   const { data, isLoading } = useAutentificacion();
   if (isLoading) return null;
   if (
-    data?.usuarioActual?.rol != "Administrador" &&
-    data?.usuarioActual?.rol != "Bodeguero"
+    data?.usuario?.rol != "Administrador" &&
+    data?.usuario?.rol != "Bodeguero"
   )
     return (
       <main>

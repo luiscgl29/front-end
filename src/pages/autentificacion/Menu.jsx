@@ -24,11 +24,12 @@ export const Menu = () => {
             <li onClick={() => irA("/clientes")}>Clientes</li>
             <li onClick={() => irA("/ventas")}>Ventas</li>
             <li onClick={() => irA("/compras")}>Compras</li>
-            <li onClick={() => irA("/reportes")}>Reportes</li>
+            <li onClick={() => irA("/reportes/ventas")}>Reporte de ventas</li>
+            <li onClick={() => irA("/reportes/compras")}>Reporte de compras</li>
           </ul>
           <article>
-            <h4>Usario: {data?.usuarioActual?.user}</h4>
-            <h4>Rol: {data?.usuarioActual?.rol}</h4>
+            <h4>Usario: {data?.usuario?.user}</h4>
+            <h4>Rol: {data?.usuario?.rol}</h4>
           </article>
           <button
             onClick={() => {

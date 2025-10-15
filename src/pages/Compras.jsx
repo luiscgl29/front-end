@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useAutentificacion } from "./autentificacion/hookAutentificacion";
 import API from "../lib/axiosLocal";
-// import "../css/Compras.css"; // Puedes usar el mismo estilo base
 
 const Compras = () => {
   const irA = useNavigate();
-  const idUsuario = 1; // Usuario logueado (ajústalo según tu autenticación)
+  const { data } = useAutentificacion();
 
-  // --- Estados principales ---
   const [busqueda, setBusqueda] = useState("");
   const [carrito, setCarrito] = useState([]);
   const [proveedor, setProveedor] = useState("");
@@ -16,7 +15,6 @@ const Compras = () => {
     new Date().toISOString().split("T")[0]
   );
 
-  // --- Consultar lotes y productos ---
   const { data: lotes, isLoading: cargandoLotes } = useQuery({
     queryKey: ["lotes"],
     queryFn: async () => {
@@ -33,7 +31,6 @@ const Compras = () => {
     },
   });
 
-  // --- Agregar lote al carrito ---
   const agregarLote = (lote, cantidad, precio) => {
     const existente = carrito.find((p) => p.idLote === lote.idLote);
     if (existente) {
@@ -64,31 +61,28 @@ const Compras = () => {
     }
   };
 
-  // --- Eliminar lote del carrito ---
   const eliminarLote = (idLote) => {
     setCarrito(carrito.filter((p) => p.idLote !== idLote));
   };
 
-  // --- Calcular totales ---
   const subtotal = carrito.reduce((acc, p) => acc + p.montoTotal, 0);
   const iva = subtotal * 0.12;
   const totalCompra = subtotal + iva;
 
-  // --- Enviar compra ---
   const mutationCompra = useMutation({
     mutationFn: async () => {
-      // if (!proveedor) throw new Error("Debes seleccionar un proveedor.");
+      if (carrito.length === 0) throw new Error("El carrito está vacío.");
+
       const compra = {
-        idUsuario,
-        codProveedor: Number(proveedor) || 1,
-        fecha: fechaCompra,
-        detalles: carrito.map((p) => ({
+        idUsuario: data?.usuario?.usuarioId,
+        codProveedor: Number(proveedor),
+        totalCompra: totalCompra,
+        compradetalle: carrito.map((p) => ({
           idLote: p.idLote,
           cantidadComprada: p.cantidadComprada,
           precioCompra: p.precioCompra,
         })),
       };
-      console.log(compra);
 
       const res = await API.post("/compras", compra);
       return res.data;
@@ -106,7 +100,6 @@ const Compras = () => {
 
   if (cargandoLotes || cargandoProveedores) return <h2>Cargando datos...</h2>;
 
-  // --- Filtro búsqueda ---
   const filtrados = lotes.filter((l) =>
     (l.producto?.nombre || "").toLowerCase().includes(busqueda.toLowerCase())
   );
@@ -118,7 +111,6 @@ const Compras = () => {
           <h1>Registrar Compra</h1>
         </header>
 
-        {/* SECCIÓN BUSCADOR */}
         <div className="buscador">
           <input
             type="text"
@@ -128,7 +120,6 @@ const Compras = () => {
           />
         </div>
 
-        {/* SECCIÓN LISTADO DE LOTES */}
         <section className="tabla-productos">
           <table>
             <thead>
@@ -177,7 +168,6 @@ const Compras = () => {
           </table>
         </section>
 
-        {/* SECCIÓN CARRITO DE COMPRA */}
         <section className="carrito">
           <h2>Lotes Agregados</h2>
           <table>
@@ -215,7 +205,6 @@ const Compras = () => {
             <h3>Total: Q. {totalCompra.toFixed(2)}</h3>
           </div>
 
-          {/* DATOS GENERALES DE COMPRA */}
           <div className="pago">
             <label htmlFor="proveedor">Proveedor:</label>
             <select

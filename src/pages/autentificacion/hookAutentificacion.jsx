@@ -6,7 +6,7 @@ export const useAutentificacion = () => {
     queryKey: ["usuario_actual"],
     queryFn: async () => {
       try {
-        const respuesta = await API.get("/empleados/identidad");
+        const respuesta = await API.get("/usuario");
         return respuesta.data;
       } catch (error) {
         throw new Error("No ha iniciado sesion");
