@@ -30,20 +30,7 @@ const CrearProducto = () => {
   });
 
   return (
-    <div className="layout">
-      <aside className="sidebar">
-        <h2 className="logo">Constru-Tech</h2>
-        <nav>
-          <ul>
-            <li onClick={() => irA("/empleados")}>Empleados</li>
-            <li onClick={() => irA("/productos")}>Productos</li>
-            <li onClick={() => irA("/clientes")}>Clientes</li>
-            <li onClick={() => irA("/ventas")}>Ventas</li>
-            <li onClick={() => irA("/reportes")}>Reportes</li>
-          </ul>
-        </nav>
-      </aside>
-
+    <>
       <div className="productos">
         <div className="caja-proveedor">
           <h2 className="titulo-formulario">Ingrese los datos del proveedor</h2>
@@ -85,7 +72,7 @@ const CrearProducto = () => {
           </form>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

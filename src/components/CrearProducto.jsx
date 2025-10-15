@@ -34,56 +34,11 @@ const CrearProducto = () => {
   });
 
   return (
-    <div className="layout">
-      <aside className="sidebar">
-        <h2 className="logo">Constru-Tech</h2>
-        <nav>
-          <ul>
-            <li onClick={() => irA("/empleados")}>Empleados</li>
-            <li onClick={() => irA("/productos")}>Productos</li>
-            <li onClick={() => irA("/clientes")}>Clientes</li>
-            <li onClick={() => irA("/ventas")}>Ventas</li>
-            <li onClick={() => irA("/reportes")}>Reportes</li>
-          </ul>
-        </nav>
-      </aside>
-
+    <>
       <div className="productos">
         <div className="caja-productos">
           <h2 className="titulo-formulario">Ingrese los datos del producto</h2>
           <form>
-            {/* <label className="label-producto">
-              Seleccione la categoría del Producto:
-            </label>
-            <select
-              className="select-producto"
-              value={idCategoria}
-              onChange={(e) => setIdCategoria(e.target.value)}
-            >
-              <option value="">-- Seleccione una categoría --</option>
-              <option value="cemento">Cemento</option>
-              <option value="pintura">Pintura</option>
-              <option value="madera">Madera</option>
-              <option value="herramientas">Herramientas</option>
-              <option value="acero">Acero</option>
-            </select>
-
-            <label className="label-producto">
-              Seleccione la marca del Producto:
-            </label>
-            <select
-              className="select-producto"
-              value={idMarca}
-              onChange={(e) => setIdMarca(e.target.value)}
-            >
-              <option value="">-- Seleccione una marca --</option>
-              <option value="cmi">CMI</option>
-              <option value="ferromax">Ferromax</option>
-              <option value="progreso">Progreso</option>
-              <option value="tolteca">Tolteca</option>
-              <option value="sur">SUR</option>
-            </select> */}
-
             <label className="label-producto">
               Ingrese categoria del Producto:{" "}
             </label>
@@ -164,7 +119,7 @@ const CrearProducto = () => {
           </form>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -32,20 +32,7 @@ const CrearCliente = () => {
   });
 
   return (
-    <div className="layout">
-      <aside className="sidebar">
-        <h2 className="logo">Constru-Tech</h2>
-        <nav>
-          <ul>
-            <li onClick={() => irA("/empleados")}>Empleados</li>
-            <li onClick={() => irA("/productos")}>Productos</li>
-            <li onclick={() => irA("/clientes")}>Clientes</li>
-            <li onClick={() => irA("/ventas")}>Ventas</li>
-            <li onClick={() => irA("/reportes")}>Reportes</li>
-          </ul>
-        </nav>
-      </aside>
-
+    <>
       <div className="clientes">
         <div className="caja-clientes">
           <h2 className="titulo-formulario">Ingrese los datos del producto</h2>
@@ -115,7 +102,7 @@ const CrearCliente = () => {
           </form>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

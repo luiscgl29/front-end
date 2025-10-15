@@ -22,7 +22,7 @@ const Ventas = () => {
   const idUsuario = 1; // Usuario logueado
 
   // --- Consultar productos ---
-  const { data: productos, isLoading } = useQuery({
+  const { data: productos = [], isLoading } = useQuery({
     queryKey: ["productos"],
     queryFn: async () => {
       const res = await API.get("/productos");
@@ -130,26 +130,12 @@ const Ventas = () => {
   if (isLoading) return <h1>Cargando productos...</h1>;
 
   // --- Filtro de búsqueda ---
-  const filtrados = productos.filter((p) =>
+  const filtrados = productos?.filter((p) =>
     p.nombre.toLowerCase().includes(busqueda.toLowerCase())
   );
 
   return (
-    <div className="layout">
-      <aside className="sidebar">
-        <h2 className="logo">Constru-Tech</h2>
-        <nav>
-          <ul>
-            <li onClick={() => irA("/empleados")}>Empleados</li>
-            <li onClick={() => irA("/productos")}>Productos</li>
-            <li onClick={() => irA("/clientes")}>Clientes</li>
-            <li onClick={() => irA("/ventas")}>Ventas</li>
-            <li onClick={() => irA("/compras")}>Compras</li>
-            <li onClick={() => irA("/reportes")}>Reportes</li>
-          </ul>
-        </nav>
-      </aside>
-
+    <>
       <main className="main">
         <header className="header">
           <h1>Registrar Venta</h1>
@@ -304,7 +290,7 @@ const Ventas = () => {
           </button>
         </section>
       </main>
-    </div>
+    </>
   );
 };
 

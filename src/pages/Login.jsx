@@ -12,7 +12,7 @@ const Login = () => {
     try {
       const respuesta = await API.post("/login", { user, contrasenia });
       if (respuesta.status === 200) {
-        irA("/home");
+        irA("/");
       }
     } catch (e) {
       console.error(e);

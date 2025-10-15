@@ -1,9 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import "../css/Home.css";
-// import { cerrarSesion } from "../../../backend/src/controllers/jwtControlador";
+import { useAutentificacion } from "./autentificacion/hookAutentificacion";
+import NoEstaLogeado from "./autentificacion/NoEstaLogeado";
+import API from "../lib/axiosLocal";
 
 const Home = () => {
   const irA = useNavigate();
+  const cerrarSesion = async () => {
+    await API.get("/login");
+    irA("/login");
+  };
+  const { data, isError } = useAutentificacion();
 
   const opciones = [
     {
@@ -38,9 +45,16 @@ const Home = () => {
     },
   ];
 
+  if (isError) return <NoEstaLogeado />;
+
   return (
     <main className="menu-container">
-      <h1 className="titulo">Bienvenido. Elija una opción</h1>
+      <h1 className="titulo">
+        Bienvenido {data?.usuarioActual?.user}!. Elija una opción:
+      </h1>
+      <p style={{ background: "black" }}>
+        El ID es: {data?.usuarioActual?.usuarioId}
+      </p>
       <section className="grid">
         {opciones.map((op, index) => (
           <article key={index} className="card" onClick={() => irA(op.ruta)}>
@@ -49,7 +63,13 @@ const Home = () => {
             <p>{op.descripcion}</p>
           </article>
         ))}
-        {/* <button onClick={cerrarSesion()}>Cerrar Sesión</button> */}
+        <button
+          onClick={() => {
+            cerrarSesion();
+          }}
+        >
+          Cerrar Sesión
+        </button>
       </section>
     </main>
   );

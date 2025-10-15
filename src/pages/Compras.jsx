@@ -112,22 +112,7 @@ const Compras = () => {
   );
 
   return (
-    <div className="layout">
-      {/* Sidebar reutilizada */}
-      <aside className="sidebar">
-        <h2 className="logo">Constru-Tech</h2>
-        <nav>
-          <ul>
-            <li onClick={() => irA("/empleados")}>Empleados</li>
-            <li onClick={() => irA("/productos")}>Productos</li>
-            <li onClick={() => irA("/clientes")}>Clientes</li>
-            <li onClick={() => irA("/ventas")}>Ventas</li>
-            <li onClick={() => irA("/compras")}>Compras</li>
-            <li onClick={() => irA("/reportes")}>Reportes</li>
-          </ul>
-        </nav>
-      </aside>
-
+    <>
       <main className="main">
         <header className="header">
           <h1>Registrar Compra</h1>
@@ -260,7 +245,7 @@ const Compras = () => {
           </button>
         </section>
       </main>
-    </div>
+    </>
   );
 };
 

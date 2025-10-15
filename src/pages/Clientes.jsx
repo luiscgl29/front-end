@@ -21,21 +21,7 @@ const Clientes = () => {
   }
 
   return (
-    <div className="layot">
-      <aside className="sidebar">
-        <h2 className="logo">Constru-Tech</h2>
-        <nav>
-          <ul>
-            <li onClick={() => irA("/empleados")}>Empleados</li>
-            <li onClick={() => irA("/productos")}>Productos</li>
-            <li onClick={() => irA("/clientes")}>Clientes</li>
-            <li onClick={() => irA("/ventas")}>Ventas</li>
-            <li onClick={() => irA("/compras")}>Compras</li>
-            <li onClick={() => irA("/reportes")}>Reportes</li>
-          </ul>
-        </nav>
-      </aside>
-
+    <>
       <main className="main">
         <header className="header">
           <button className="btn-volver" onClick={() => irA("/home")}>
@@ -49,7 +35,7 @@ const Clientes = () => {
 
         <section className="grid">
           {data?.Cliente?.map((cliente) => (
-            <article key={cliente.id} className="card">
+            <article key={cliente.codCliente} className="card">
               <h2>{cliente.nombre}</h2>
               <p className="direccion">{cliente.direccion}</p>
               <p className="telefono">{cliente.telefono}</p>
@@ -58,7 +44,7 @@ const Clientes = () => {
           ))}
         </section>
       </main>
-    </div>
+    </>
   );
 };
 
