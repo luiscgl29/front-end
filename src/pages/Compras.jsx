@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useAutentificacion } from "./autentificacion/hookAutentificacion";
 import API from "../lib/axiosLocal";
@@ -7,6 +7,7 @@ import API from "../lib/axiosLocal";
 const Compras = () => {
   const irA = useNavigate();
   const { data } = useAutentificacion();
+  const queryClient = useQueryClient();
 
   const [busqueda, setBusqueda] = useState("");
   const [carrito, setCarrito] = useState([]);
@@ -14,6 +15,13 @@ const Compras = () => {
   const [fechaCompra, setFechaCompra] = useState(
     new Date().toISOString().split("T")[0]
   );
+
+  // Estados para el formulario de crear proveedor
+  const [mostrarFormProveedor, setMostrarFormProveedor] = useState(false);
+  const [nuevoProveedor, setNuevoProveedor] = useState({
+    nombreEmpresa: "",
+    telefono: "",
+  });
 
   const { data: lotes, isLoading: cargandoLotes } = useQuery({
     queryKey: ["lotes"],
@@ -27,9 +35,45 @@ const Compras = () => {
     queryKey: ["proveedores"],
     queryFn: async () => {
       const res = await API.get("/proveedores");
-      return res.data?.Proveedores || [];
+      return res.data?.Proveedor || [];
     },
   });
+
+  // Mutation para crear proveedor
+  const mutationCrearProveedor = useMutation({
+    mutationFn: async (proveedorData) => {
+      const res = await API.post("/proveedores", proveedorData);
+      return res.data;
+    },
+    onSuccess: (data) => {
+      alert("✅ Proveedor creado con éxito");
+      queryClient.invalidateQueries(["proveedores"]);
+      setMostrarFormProveedor(false);
+      setNuevoProveedor({
+        nombreEmpresa: "",
+        telefono: "",
+      });
+      // Seleccionar automáticamente el nuevo proveedor
+      if (data?.proveedor?.codProveedor) {
+        setProveedor(data.proveedor.codProveedor.toString());
+      }
+    },
+    onError: (err) => {
+      const msg = err.response?.data?.mensaje || err.message;
+      alert("❌ Error al crear proveedor: " + msg);
+    },
+  });
+
+  const handleCrearProveedor = () => {
+    if (!nuevoProveedor.nombreEmpresa.trim()) {
+      alert("El nombre de la empresa es obligatorio.");
+      return;
+    }
+    mutationCrearProveedor.mutate({
+      nombreEmpresa: nuevoProveedor.nombreEmpresa.trim(),
+      telefono: nuevoProveedor.telefono.trim() || null,
+    });
+  };
 
   const agregarLote = (lote, cantidad, precio) => {
     const existente = carrito.find((p) => p.idLote === lote.idLote);
@@ -206,19 +250,110 @@ const Compras = () => {
           </div>
 
           <div className="pago">
-            <label htmlFor="proveedor">Proveedor:</label>
-            <select
-              id="proveedor"
-              value={proveedor}
-              onChange={(e) => setProveedor(e.target.value)}
-            >
-              <option value="">-- Seleccione un proveedor --</option>
-              {proveedores.map((prov) => (
-                <option key={prov.codProveedor} value={prov.codProveedor}>
-                  {prov.nombreEmpresa}
-                </option>
-              ))}
-            </select>
+            <h3>Información del Proveedor</h3>
+
+            <label htmlFor="proveedor">Seleccionar Proveedor:</label>
+            <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
+              <select
+                id="proveedor"
+                value={proveedor}
+                onChange={(e) => setProveedor(e.target.value)}
+                style={{ flex: 1 }}
+              >
+                <option value="">-- Seleccione un proveedor --</option>
+                {proveedores.map((prov) => (
+                  <option key={prov.codProveedor} value={prov.codProveedor}>
+                    {prov.nombreEmpresa}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={() => setMostrarFormProveedor(!mostrarFormProveedor)}
+                style={{
+                  padding: "8px 16px",
+                  backgroundColor: mostrarFormProveedor ? "#6c757d" : "#28a745",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {mostrarFormProveedor ? "❌ Cancelar" : "➕ Crear Proveedor"}
+              </button>
+            </div>
+
+            {/* FORMULARIO CREAR PROVEEDOR */}
+            {mostrarFormProveedor && (
+              <div
+                style={{
+                  marginBottom: "20px",
+                  padding: "15px",
+                  border: "2px solid #28a745",
+                  borderRadius: "8px",
+                  backgroundColor: "#f8f9fa",
+                }}
+              >
+                <h4 style={{ marginTop: 0, color: "#28a745" }}>
+                  Nuevo Proveedor
+                </h4>
+
+                <label htmlFor="nuevoNombreEmpresa">
+                  Nombre de la Empresa: *
+                </label>
+                <input
+                  id="nuevoNombreEmpresa"
+                  type="text"
+                  placeholder="Nombre de la empresa"
+                  value={nuevoProveedor.nombreEmpresa}
+                  onChange={(e) =>
+                    setNuevoProveedor({
+                      ...nuevoProveedor,
+                      nombreEmpresa: e.target.value,
+                    })
+                  }
+                  maxLength={45}
+                  required
+                />
+
+                <label htmlFor="nuevoTelefono">Teléfono:</label>
+                <input
+                  id="nuevoTelefono"
+                  type="tel"
+                  placeholder="Número de teléfono (opcional)"
+                  value={nuevoProveedor.telefono}
+                  onChange={(e) =>
+                    setNuevoProveedor({
+                      ...nuevoProveedor,
+                      telefono: e.target.value,
+                    })
+                  }
+                  maxLength={15}
+                />
+
+                <button
+                  type="button"
+                  onClick={handleCrearProveedor}
+                  disabled={mutationCrearProveedor.isPending}
+                  style={{
+                    width: "100%",
+                    padding: "10px",
+                    backgroundColor: "#28a745",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    fontWeight: "bold",
+                    marginTop: "10px",
+                  }}
+                >
+                  {mutationCrearProveedor.isPending
+                    ? "Guardando..."
+                    : "💾 Guardar Proveedor"}
+                </button>
+              </div>
+            )}
 
             <label htmlFor="fechaCompra">Fecha:</label>
             <input

@@ -2,7 +2,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../lib/axiosLocal";
-// import "../css/CrearCliente.css";
 
 const CrearCliente = () => {
   const irA = useNavigate();
@@ -33,58 +32,56 @@ const CrearCliente = () => {
 
   return (
     <>
-      <div className="clientes">
-        <div className="caja-clientes">
-          <h2 className="titulo-formulario">Ingrese los datos del producto</h2>
+      <div className="form-container">
+        <div className="form-box">
+          <h2 className="form-title">Ingrese los datos del producto</h2>
           <form>
-            <label className="label-cliente">Ingrese nombre del cliente </label>
+            <label className="form-label">Ingrese nombre del cliente </label>
             <input
-              className="input-cliente"
+              className="form-input"
               type="text"
               placeholder="Nombre del Cliente"
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
             />
-            <label className="label-cliente">
+            <label className="form-label">
               Ingrese la direccion del Cliente{" "}
             </label>
             <input
-              className="input-cliente"
+              className="form-input"
               type="text"
               placeholder="Direccion del Cliente"
               value={direccion}
               onChange={(e) => setDireccion(e.target.value)}
             />
-            <label className="label-cliente">
+            <label className="form-label">
               Ingrese el telefono del Cliente{""}
             </label>
             <input
-              className="input-cliente"
+              className="form-input"
               type="text"
               placeholder="Telefono del Cliente"
               value={telefono}
               onChange={(e) => setTelefono(e.target.value)}
             />
-            <label className="label-cliente">
-              Ingrese el saldo del Cliente{" "}
-            </label>
+            <label className="form-label">Ingrese el saldo del Cliente </label>
             <input
-              className="input-cliente"
+              className="form-input"
               type="text"
               placeholder="Saldo del Cliente"
               value={saldo}
               onChange={(e) => setSaldo(e.target.value)}
             />
-            <label className="label-cliente">Ingrese el NIT del Cliente</label>
+            <label className="form-label">Ingrese el NIT del Cliente</label>
             <input
-              className="input-cliente"
+              className="form-input"
               type="text"
               placeholder="NIT del Cliente"
               value={nitCliente}
               onChange={(e) => setNitCliente(e.target.value)}
             />
             <button
-              className="boton-cliente"
+              className="form-btn-primary"
               onclick={(e) => {
                 e.preventDefault();
                 const clientes = {

@@ -1,22 +1,37 @@
 import { useState } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import Select from "react-select";
 import API from "../lib/axiosLocal";
-import "../css/Ventas.css";
 import { useAutentificacion } from "../pages/autentificacion/hookAutentificacion";
 
 const Ventas = () => {
-  const irA = useNavigate();
+  const queryClient = useQueryClient();
   const { data } = useAutentificacion();
 
   const [busqueda, setBusqueda] = useState("");
   const [carrito, setCarrito] = useState([]);
-  const [metodoPago, setMetodoPago] = useState("Efectivo");
   const [efectivoRecibido, setEfectivoRecibido] = useState("");
-  const [cliente, setCliente] = useState(1);
-  const [nombreCliente, setNombreCliente] = useState("");
-  const [numeroNit, setNumeroNit] = useState("");
-  const [mostrarLotes, setMostrarLotes] = useState(false); // Nuevo estado para el checkbox
+  const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
+  const [mostrarLotes, setMostrarLotes] = useState(false);
+
+  // Estados para el formulario de crear cliente
+  const [mostrarFormCliente, setMostrarFormCliente] = useState(false);
+  const [nuevoCliente, setNuevoCliente] = useState({
+    nombre: "",
+    nitCliente: "",
+    telefono: "",
+    direccion: "",
+    saldo: 0,
+  });
+
+  // --- Consultar clientes ---
+  const { data: clientes = [], isLoading: cargandoClientes } = useQuery({
+    queryKey: ["clientes"],
+    queryFn: async () => {
+      const res = await API.get("/clientes");
+      return res.data?.Cliente || [];
+    },
+  });
 
   // --- Consultar productos ---
   const { data: productos = [], isLoading: cargandoProductos } = useQuery({
@@ -34,14 +49,55 @@ const Ventas = () => {
       const res = await API.get("/lotes");
       return res.data?.Lotes || [];
     },
-    enabled: mostrarLotes, // Solo consulta cuando el checkbox está activo
+    enabled: mostrarLotes,
   });
+
+  // --- Crear cliente ---
+  const mutationCrearCliente = useMutation({
+    mutationFn: async (clienteData) => {
+      const res = await API.post("/clientes", clienteData);
+      return res.data;
+    },
+    onSuccess: (data) => {
+      alert("✅ Cliente creado con éxito.");
+      queryClient.invalidateQueries(["clientes"]);
+      setMostrarFormCliente(false);
+      setNuevoCliente({
+        nombre: "",
+        nitCliente: "",
+        telefono: "",
+        direccion: "",
+        saldo: 0,
+      });
+      // Seleccionar automáticamente el cliente recién creado
+      if (data.cliente) {
+        setClienteSeleccionado({
+          value: data.cliente.nitCliente,
+          label: data.cliente.nombre,
+          codCliente: data.cliente.codCliente,
+        });
+      }
+    },
+    onError: (err) => {
+      alert(
+        "❌ Error al crear cliente: " +
+          (err.response?.data?.mensaje || err.message)
+      );
+    },
+  });
+
+  // --- Opciones para react-select ---
+  const opcionesClientes = clientes.map((c) => ({
+    value: c.nitCliente || "CF",
+    label: c.nombre,
+    codCliente: c.codCliente,
+  }));
 
   // --- Cambiar entre productos y lotes ---
   const handleToggleLotes = (checked) => {
     setMostrarLotes(checked);
-    setCarrito([]); // Limpiar carrito al cambiar de modo
-    setBusqueda(""); // Limpiar búsqueda
+    setCarrito([]);
+    setBusqueda("");
   };
 
   // --- Agregar producto al carrito ---
@@ -144,6 +200,7 @@ const Ventas = () => {
 
       const venta = {
         idUsuario: data?.usuario?.usuarioId,
+        codCliente: clienteSeleccionado?.codCliente || null,
         totalVenta: total,
         detallesventa: carrito.map((p) => ({
           idProducto: p.idProducto,
@@ -161,8 +218,7 @@ const Ventas = () => {
       alert("✅ Venta registrada con éxito.");
       setCarrito([]);
       setEfectivoRecibido("");
-      setNombreCliente("");
-      setNumeroNit("");
+      setClienteSeleccionado(null);
     },
     onError: (err) => {
       const mensajeError =
@@ -173,7 +229,20 @@ const Ventas = () => {
     },
   });
 
-  if (cargandoProductos || (mostrarLotes && cargandoLotes)) {
+  // --- Manejar creación de cliente ---
+  const handleCrearCliente = () => {
+    if (!nuevoCliente.nombre.trim()) {
+      alert("El nombre del cliente es obligatorio.");
+      return;
+    }
+    mutationCrearCliente.mutate(nuevoCliente);
+  };
+
+  if (
+    cargandoProductos ||
+    cargandoClientes ||
+    (mostrarLotes && cargandoLotes)
+  ) {
     return <h1>Cargando datos...</h1>;
   }
 
@@ -239,8 +308,7 @@ const Ventas = () => {
             </thead>
             <tbody>
               {mostrarLotes
-                ? // Mostrar LOTES
-                  itemsFiltrados.map((l) => (
+                ? itemsFiltrados.map((l) => (
                     <tr key={l.idLote}>
                       <td>{l.idLote}</td>
                       <td>{l.nombrePaquete}</td>
@@ -272,8 +340,7 @@ const Ventas = () => {
                       </td>
                     </tr>
                   ))
-                : // Mostrar PRODUCTOS
-                  itemsFiltrados.map((p) => (
+                : itemsFiltrados.map((p) => (
                     <tr key={p.idProducto}>
                       <td>{p.codigo || p.idProducto}</td>
                       <td>{p.nombre}</td>
@@ -356,30 +423,146 @@ const Ventas = () => {
           </div>
 
           <div className="pago">
-            <label htmlFor="nombreCliente">Nombre Cliente:</label>
-            <input
-              id="nombreCliente"
-              type="text"
-              placeholder="Consumidor Final"
-              value={nombreCliente}
-              onChange={(e) => setNombreCliente(e.target.value)}
-            />
+            <h3>Información del Cliente</h3>
 
-            <label htmlFor="numeroNit">Número de NIT:</label>
-            <input
-              id="numeroNit"
-              type="text"
-              placeholder="C/F o NIT"
-              value={numeroNit}
-              onChange={(e) => setNumeroNit(e.target.value)}
-            />
+            <label htmlFor="selectCliente">Seleccionar Cliente:</label>
+            <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
+              <div style={{ flex: 1 }}>
+                <Select
+                  id="selectCliente"
+                  options={opcionesClientes}
+                  value={clienteSeleccionado}
+                  onChange={setClienteSeleccionado}
+                  placeholder="Buscar cliente por nombre..."
+                  isClearable
+                  noOptionsMessage={() => "No se encontraron clientes"}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => setMostrarFormCliente(!mostrarFormCliente)}
+                style={{
+                  padding: "8px 16px",
+                  backgroundColor: mostrarFormCliente ? "#6c757d" : "#28a745",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {mostrarFormCliente ? "❌ Cancelar" : "➕ Crear Cliente"}
+              </button>
+            </div>
 
-            <p>Tipo de Pago: **Efectivo**</p>
+            {/* FORMULARIO CREAR CLIENTE */}
+            {mostrarFormCliente && (
+              <div
+                style={{
+                  marginBottom: "20px",
+                  padding: "15px",
+                  border: "2px solid #28a745",
+                  borderRadius: "8px",
+                  backgroundColor: "#f8f9fa",
+                }}
+              >
+                <h4 style={{ marginTop: 0, color: "#28a745" }}>
+                  Nuevo Cliente
+                </h4>
+
+                <label htmlFor="nuevoNombre">Nombre Completo: *</label>
+                <input
+                  id="nuevoNombre"
+                  type="text"
+                  placeholder="Nombre del cliente"
+                  value={nuevoCliente.nombre}
+                  onChange={(e) =>
+                    setNuevoCliente({ ...nuevoCliente, nombre: e.target.value })
+                  }
+                  required
+                />
+
+                <label htmlFor="nuevoNit">NIT:</label>
+                <input
+                  id="nuevoNit"
+                  type="text"
+                  placeholder="NIT del cliente (opcional)"
+                  value={nuevoCliente.nitCliente}
+                  onChange={(e) =>
+                    setNuevoCliente({
+                      ...nuevoCliente,
+                      nitCliente: e.target.value,
+                    })
+                  }
+                />
+
+                <label htmlFor="nuevoTelefono">Teléfono:</label>
+                <input
+                  id="nuevoTelefono"
+                  type="tel"
+                  placeholder="Número de teléfono"
+                  value={nuevoCliente.telefono}
+                  onChange={(e) =>
+                    setNuevoCliente({
+                      ...nuevoCliente,
+                      telefono: e.target.value,
+                    })
+                  }
+                />
+
+                <label htmlFor="nuevaDireccion">Dirección:</label>
+                <input
+                  id="nuevaDireccion"
+                  type="text"
+                  placeholder="Dirección completa"
+                  value={nuevoCliente.direccion}
+                  onChange={(e) =>
+                    setNuevoCliente({
+                      ...nuevoCliente,
+                      direccion: e.target.value,
+                    })
+                  }
+                />
+
+                <label htmlFor="nuevoSaldo">Saldo Inicial:</label>
+                <input
+                  id="nuevoSaldo"
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                  value={nuevoCliente.saldo}
+                  onChange={(e) =>
+                    setNuevoCliente({ ...nuevoCliente, saldo: e.target.value })
+                  }
+                />
+
+                <button
+                  type="button"
+                  onClick={handleCrearCliente}
+                  style={{
+                    width: "100%",
+                    padding: "10px",
+                    backgroundColor: "#28a745",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    fontWeight: "bold",
+                    marginTop: "10px",
+                  }}
+                >
+                  💾 Guardar Cliente
+                </button>
+              </div>
+            )}
+
+            <p style={{ marginTop: "20px" }}>Tipo de Pago: **Efectivo**</p>
 
             <label htmlFor="efectivoRecibido">Efectivo Recibido:</label>
             <input
               id="efectivoRecibido"
               type="number"
+              step="0.01"
               min={total.toFixed(2)}
               value={efectivoRecibido}
               onChange={(e) => setEfectivoRecibido(e.target.value)}

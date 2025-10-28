@@ -1,13 +1,931 @@
-body {
+/* ============================================
+   ESTILOS GLOBALES Y RESET
+   ============================================ */
+* {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.link-menu {
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  min-width: 320px;
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+/* ============================================
+   LAYOUT PRINCIPAL Y SIDEBAR
+   ============================================ */
+.layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f5f7fa;
+  font-family: Arial, sans-serif;
+}
+
+.sidebar {
+  width: 220px;
+  background: #1a2a40;
+  color: #fff;
+  padding: 20px;
+  flex-shrink: 0;
+}
+
+.sidebar .logo {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  color: #fff;
+}
+
+.sidebar nav ul {
   list-style: none;
-  margin: 10px 0;
+  padding: 0;
+}
+
+.sidebar nav ul li {
+  padding: 12px;
+  margin: 8px 0;
+  background: #243b55;
+  border-radius: 8px;
   cursor: pointer;
+  transition: background 0.3s;
+}
+
+.sidebar nav ul li:hover {
+  background: #34495e;
+}
+
+.sidebar article {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #34495e;
+}
+
+.sidebar article h4 {
+  margin: 8px 0;
+  font-size: 14px;
+  font-weight: normal;
+  color: #bdc3c7;
+}
+
+.sidebar button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.sidebar button:hover {
+  background: #c0392b;
+}
+
+/* ============================================
+   CONTENEDORES PRINCIPALES
+   ============================================ */
+.main {
+  flex: 1;
+  width: 100%;
+  background-color: #f5f6fa;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.pagina-container {
+  flex: 1;
+  width: 100%;
+  background-color: #f5f6fa;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* ============================================
+   HEADERS
+   ============================================ */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.header h1 {
+  font-size: 28px;
+  color: #1d4ed8;
+  margin: 0;
+}
+
+.pagina-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 25px;
+  gap: 15px;
+}
+
+.pagina-header h1 {
+  font-size: 28px;
+  color: #1d4ed8;
+  margin: 0;
+}
+
+.pagina-header button {
+  background-color: #2563eb;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s;
+}
+
+.pagina-header button:hover {
+  background-color: #1e40af;
+}
+
+/* ============================================
+   BOTONES
+   ============================================ */
+.btn-crear {
+  background-color: #2563eb;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s;
+}
+
+.btn-crear:hover {
+  background-color: #1e40af;
+}
+
+.btn-editar {
+  background-color: #f59e0b;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+  margin-top: 10px;
+  width: 100%;
+  transition: background-color 0.2s;
+}
+
+.btn-editar:hover {
+  background-color: #d97706;
+}
+
+.btn-venta {
+  width: 100%;
+  padding: 12px;
+  background-color: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+  transition: background-color 0.3s;
+}
+
+.btn-venta:hover {
+  background-color: #15803d;
+}
+
+.btn-venta:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.btn-cancelar {
+  background-color: #6c757d;
+  margin-top: 10px;
+}
+
+.btn-cancelar:hover {
+  background-color: #5a6268;
+}
+
+/* ============================================
+   GRIDS Y TARJETAS
+   ============================================ */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.productos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card h2 {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 8px;
+  margin-top: 0;
+}
+
+.producto-card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  min-height: 220px;
+}
+
+.producto-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.15);
+}
+
+.producto-card h2 {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 8px;
+  margin-top: 0;
+}
+
+/* ============================================
+   ELEMENTOS DE TARJETAS
+   ============================================ */
+.descripcion {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+  flex-grow: 1;
+}
+
+.direccion {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.telefono {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.precio {
+  font-size: 18px;
+  font-weight: bold;
+  color: #16a34a;
+  margin-bottom: 10px;
+}
+
+.saldo {
+  font-size: 18px;
+  font-weight: bold;
+  color: #16a34a;
+  margin-bottom: 10px;
+}
+
+.cantidad {
+  font-size: 14px;
+  color: #374151;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.producto-card .cantidad {
+  font-size: 14px;
+  color: #374151;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+/* ============================================
+   ESTADOS
+   ============================================ */
+.estado {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.estado.activo {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.estado.inactivo {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.loading {
+  text-align: center;
+  margin-top: 50px;
+  font-size: 20px;
+  color: #555;
+}
+
+/* ============================================
+   MODAL
+   ============================================ */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-contenido {
+  width: 400px;
+  max-width: 90%;
+}
+
+.modal-producto-nombre {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 16px;
+}
+
+.modal-producto-nombre strong {
+  color: #1d4ed8;
+  font-size: 18px;
+}
+
+.modal-error {
+  color: #dc2626;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ============================================
+   BUSCADOR
+   ============================================ */
+.buscador {
+  margin-bottom: 20px;
+}
+
+.buscador input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.buscador input:focus {
+  border-color: #2563eb;
+}
+
+/* ============================================
+   TABLAS
+   ============================================ */
+.tabla-productos {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.tabla-productos table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla-productos thead {
+  background: #f3f4f6;
+}
+
+.tabla-productos th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.tabla-productos td {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #4b5563;
+}
+
+.tabla-productos tr:hover {
+  background: #f9fafb;
+}
+
+.tabla-productos input {
+  width: 80px;
+  padding: 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.tabla-productos button {
+  padding: 8px 16px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s;
+}
+
+.tabla-productos button:hover {
+  background: #1d4ed8;
+}
+
+/* ============================================
+   CARRITO
+   ============================================ */
+.carrito {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.carrito h2 {
+  font-size: 22px;
+  color: #1f2937;
+  margin-bottom: 15px;
+}
+
+.carrito table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.carrito thead {
+  background: #f3f4f6;
+}
+
+.carrito th {
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.carrito td {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #4b5563;
+}
+
+.carrito button {
+  padding: 6px 12px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.3s;
+}
+
+.carrito button:hover {
+  background: #dc2626;
+}
+
+/* ============================================
+   TOTALES Y PAGO
+   ============================================ */
+.totales {
+  background: #f9fafb;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.totales p {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 0;
+  font-size: 16px;
+  color: #4b5563;
+}
+
+.totales h3 {
+  display: flex;
+  justify-content: space-between;
+  margin: 12px 0 0 0;
+  padding-top: 12px;
+  border-top: 2px solid #e5e7eb;
+  font-size: 20px;
+  color: #16a34a;
+}
+
+.pago {
+  margin-top: 20px;
+}
+
+.pago h3 {
+  font-size: 18px;
+  color: #1f2937;
+  margin-bottom: 15px;
+}
+
+.pago label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #374151;
+  font-size: 14px;
+}
+
+.pago input,
+.pago select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 15px;
+  color: #374151;
+  background: white;
+}
+
+.pago input:focus,
+.pago select:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+.pago p {
+  margin: 12px 0;
+  font-size: 15px;
+  color: #4b5563;
+}
+
+.pago strong {
+  color: #1f2937;
+  font-size: 18px;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+
+  .grid,
+  .productos-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .tabla-productos,
+  .carrito {
+    overflow-x: auto;
+  }
+}
+
+/* ============================================
+   FORMULARIOS DE CREACIÓN/EDICIÓN - GENÉRICOS
+   ============================================ */
+
+/* Contenedor principal del formulario */
+.form-container {
+  flex: 1;
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px;
+  background-color: #f5f6fa;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 40px;
+}
+
+/* Caja del formulario */
+.form-box {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  width: 100%;
+}
+
+/* Título del formulario */
+.form-title {
+  font-size: 24px;
+  color: #1d4ed8;
+  margin-bottom: 25px;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Formulario */
+.form-box form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Labels del formulario */
+.form-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* Inputs de texto */
+.form-input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 15px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  color: #374151;
+  background: white;
+}
+
+.form-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-input:disabled {
+  background-color: #f3f4f6;
+  cursor: not-allowed;
+}
+
+/* Textarea */
+.form-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 15px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  color: #374151;
+  background: white;
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+}
+
+.form-textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Select */
+.form-select {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 15px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  color: #374151;
+  background: white;
+  cursor: pointer;
+}
+
+.form-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-select option {
+  padding: 8px;
+}
+
+/* Grupo de campo (label + input juntos) */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Botón principal del formulario */
+.form-btn-primary {
+  width: 100%;
+  padding: 14px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  margin-top: 10px;
+}
+
+.form-btn-primary:hover {
+  background-color: #1e40af;
+  transform: translateY(-1px);
+}
+
+.form-btn-primary:active {
+  transform: translateY(0);
+}
+
+.form-btn-primary:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Botón secundario (cancelar, volver) */
+.form-btn-secondary {
+  width: 100%;
+  padding: 14px;
+  background-color: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  margin-top: 10px;
+}
+
+.form-btn-secondary:hover {
+  background-color: #4b5563;
+  transform: translateY(-1px);
+}
+
+.form-btn-secondary:active {
+  transform: translateY(0);
+}
+
+/* Grupo de botones */
+.form-btn-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.form-btn-group .form-btn-primary,
+.form-btn-group .form-btn-secondary {
+  margin-top: 0;
+}
+
+/* Mensajes de error en formulario */
+.form-error {
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: 4px;
+  display: block;
+}
+
+/* Mensaje de éxito */
+.form-success {
+  color: #16a34a;
+  font-size: 13px;
+  margin-top: 4px;
+  display: block;
+}
+
+/* Input con error */
+.form-input.error,
+.form-select.error,
+.form-textarea.error {
+  border-color: #dc2626;
+}
+
+.form-input.error:focus,
+.form-select.error:focus,
+.form-textarea.error:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+/* Campos requeridos - asterisco */
+.form-label.required::after {
+  content: " *";
+  color: #dc2626;
+}
+
+/* Texto de ayuda */
+.form-help-text {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 4px;
+  display: block;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-container {
+    padding: 15px;
+    padding-top: 20px;
+  }
+
+  .form-box {
+    padding: 20px;
+  }
+
+  .form-title {
+    font-size: 20px;
+  }
+
+  .form-btn-group {
+    flex-direction: column;
+  }
+
+  .form-btn-group .form-btn-primary,
+  .form-btn-group .form-btn-secondary {
+    width: 100%;
+  }
+}
+
+/* ============================================
+   PERFIL DE USUARIO EN SIDEBAR
+   ============================================ */
+
+/* Contenedor del perfil de usuario */
+.user-profile {
+  margin-top: 30px;
+  padding: 15px;
+  background: #2c3e50;
+  border-radius: 8px;
+  border-left: 10px solid #3498db;
+}
+
+/* Nombre del usuario */
+.user-profile-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+/* Rol del usuario */
+.user-profile-role {
+  font-size: 13px;
+  color: #c1c7bd;
+  font-weight: normal;
 }

@@ -2,9 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../lib/axiosLocal";
-import "../css/CrearProducto.css";
 
-const CrearProducto = () => {
+const CrearProveedor = () => {
   const irA = useNavigate();
   const [nombreEmpresa, setNombreEmpresa] = useState("");
   const [telefono, setTelefono] = useState("");
@@ -31,25 +30,23 @@ const CrearProducto = () => {
 
   return (
     <>
-      <div className="productos">
-        <div className="caja-proveedor">
-          <h2 className="titulo-formulario">Ingrese los datos del proveedor</h2>
+      <div className="form-container">
+        <div className="form-box">
+          <h2 className="form-title">Ingrese los datos del proveedor</h2>
           <form>
-            <label className="label-proveedor">
-              Ingrese nombre de la empresa{" "}
-            </label>
+            <label className="form-label">Ingrese nombre de la empresa </label>
             <input
-              className="input-proveedor"
+              className="form-input"
               type="text"
               placeholder="Nombre de la empresa"
               value={nombreEmpresa}
               onChange={(e) => setNombreEmpresa(e.target.value)}
             />
-            <label className="label-proveedor">
+            <label className="form-label">
               Ingrese telefono de la empresa:{" "}
             </label>
             <input
-              className="input-proveedor"
+              className="form-input"
               type="text"
               placeholder="Telefono de la empresa"
               value={telefono}
@@ -57,7 +54,7 @@ const CrearProducto = () => {
             />
 
             <button
-              className="boton-proveedor"
+              className="form-btn-primary"
               onClick={(e) => {
                 e.preventDefault();
                 const proveedores = {
@@ -76,4 +73,4 @@ const CrearProducto = () => {
   );
 };
 
-export default CrearProducto;
+export default CrearProveedor;

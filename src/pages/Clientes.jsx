@@ -1,7 +1,6 @@
 import API from "../lib/axiosLocal";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-// import "../css/Clientes.css";
 
 const Clientes = () => {
   const irA = useNavigate();
@@ -22,15 +21,17 @@ const Clientes = () => {
 
   return (
     <>
-      <main className="main">
-        <header className="header">
-          <button className="btn-volver" onClick={() => irA("/home")}>
-            - volver
-          </button>
+      <main className="pagina-container">
+        <header className="pagina-header">
           <h1>Listado de Clientes</h1>
-          <button className="btn-crear" onClick={() => irA("/crearCliente")}>
-            Crear Cliente
-          </button>
+          <div>
+            <button
+              className="btn-crear"
+              onClick={() => irA("/clientes/crearCliente")}
+            >
+              Crear Cliente
+            </button>
+          </div>
         </header>
 
         <section className="grid">

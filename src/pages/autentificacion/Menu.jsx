@@ -1,4 +1,4 @@
-import { Outlet, useNavigate, Link } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useAutentificacion } from "./hookAutentificacion";
 import NoEstaLogeado from "./permisos/NoEstaLogeado";
 import API from "../../lib/axiosLocal";
@@ -13,6 +13,7 @@ export const Menu = () => {
   };
 
   if (isError) return <NoEstaLogeado />;
+
   return (
     <div className="layout">
       <aside className="sidebar">
@@ -21,23 +22,25 @@ export const Menu = () => {
           <ul>
             <li onClick={() => irA("/")}>Empleados</li>
             <li onClick={() => irA("/productos")}>Productos</li>
+            <li onClick={() => irA("/lotes")}>Lotes</li>
             <li onClick={() => irA("/clientes")}>Clientes</li>
+            <li onClick={() => irA("/proveedores")}>Proveedores</li>
             <li onClick={() => irA("/ventas")}>Ventas</li>
             <li onClick={() => irA("/compras")}>Compras</li>
             <li onClick={() => irA("/reportes/ventas")}>Reporte de ventas</li>
             <li onClick={() => irA("/reportes/compras")}>Reporte de compras</li>
           </ul>
-          <article>
-            <h4>Usario: {data?.usuario?.user}</h4>
-            <h4>Rol: {data?.usuario?.rol}</h4>
-          </article>
-          <button
-            onClick={() => {
-              cerrarSesion();
-            }}
-          >
-            Cerrar sesion
-          </button>
+
+          <div className="user-profile">
+            <div className="user-profile-name">
+              {data?.usuario?.user || "Usuario"}
+            </div>
+            <div className="user-profile-role">
+              {data?.usuario?.rol || "Sin rol"}
+            </div>
+          </div>
+
+          <button onClick={() => cerrarSesion()}>Cerrar sesión</button>
         </nav>
       </aside>
       <Outlet />

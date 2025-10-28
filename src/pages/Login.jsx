@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../lib/axiosLocal";
-import "../css/Login.css";
 
 const Login = () => {
   const irA = useNavigate();

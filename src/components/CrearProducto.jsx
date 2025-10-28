@@ -1,8 +1,7 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../lib/axiosLocal";
-import "../css/CrearProducto.css";
 
 const CrearProducto = () => {
   const irA = useNavigate();
@@ -16,6 +15,22 @@ const CrearProducto = () => {
   useEffect(() => {
     document.title = "Crear Producto";
   }, []);
+
+  const { data: categorias } = useQuery({
+    queryKey: ["categorias"],
+    queryFn: async () => {
+      const respuesta = await API.get("/productos/categoria");
+      return respuesta.data;
+    },
+  });
+
+  const { data: marcas } = useQuery({
+    queryKey: ["marcas"],
+    queryFn: async () => {
+      const respuesta = await API.get("/productos/marca");
+      return respuesta.data;
+    },
+  });
 
   const queryClient = useQueryClient();
   const { mutate } = useMutation({
@@ -34,92 +49,109 @@ const CrearProducto = () => {
   });
 
   return (
-    <>
-      <div className="productos">
-        <div className="caja-productos">
-          <h2 className="titulo-formulario">Ingrese los datos del producto</h2>
-          <form>
-            <label className="label-producto">
-              Ingrese categoria del Producto:{" "}
-            </label>
-            <input
-              className="input-producto"
-              type="text"
-              //placeholder="Categoria"
+    <div className="form-container">
+      <div className="form-box">
+        <h2 className="form-title">Ingrese los datos del producto</h2>
+        <form>
+          <div className="form-group">
+            <label className="form-label">Categoría</label>
+            <select
+              className="form-select"
               value={idCategoria}
               onChange={(e) => setIdCategoria(e.target.value)}
-            />
-            <label className="label-producto">
-              Ingrese marca del Producto:{" "}
-            </label>
-            <input
-              className="input-producto"
-              type="text"
-              //placeholder="Marca"
+            >
+              <option value="">Seleccione la categoría</option>
+              {categorias?.categorias?.map((categoria) => (
+                <option
+                  key={categoria.idCategoria}
+                  value={categoria.idCategoria}
+                >
+                  {categoria.categoria}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Marca</label>
+            <select
+              className="form-select"
               value={idMarca}
               onChange={(e) => setIdMarca(e.target.value)}
-            />
-            <label className="label-producto">
-              Ingrese nombre del Producto:{" "}
-            </label>
+            >
+              <option value="">Selecciona la marca</option>
+              {marcas?.marcas?.map((marca) => (
+                <option key={marca.idMarca} value={marca.idMarca}>
+                  {marca.nombre}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Nombre del Producto</label>
             <input
-              className="input-producto"
+              className="form-input"
               type="text"
-              // placeholder="Nombre"
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
             />
-            <label className="label-producto">
-              Ingrese descripcion del Producto:{" "}
-            </label>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Descripción del Producto</label>
             <input
-              className="input-producto"
+              className="form-input"
               type="text"
-              // placeholder="descripcion"
               value={descripcion}
               onChange={(e) => setDescripcion(e.target.value)}
             />
-            <label className="label-producto">
-              Ingrese precio de venta del Producto:{" "}
-            </label>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Precio de Venta</label>
             <input
-              className="input-producto"
+              className="form-input"
               type="text"
-              // placeholder="Precio de venta"
               value={precioVenta}
               onChange={(e) => setPrecioVenta(e.target.value)}
             />
-            <label className="label-producto">
-              Ingrese cantidad del Producto:{" "}
-            </label>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Cantidad Disponible</label>
             <input
-              className="input-producto"
+              className="form-input"
               type="text"
-              // placeholder="estado"
               value={cantidadDisponible}
               onChange={(e) => setcantidadDisponible(e.target.value)}
             />
-            <button
-              className="boton-producto"
-              onClick={(e) => {
-                e.preventDefault();
-                const productos = {
-                  idCategoria,
-                  idMarca,
-                  nombre,
-                  descripcion,
-                  precioVenta,
-                  cantidadDisponible,
-                };
-                mutate(productos);
-              }}
-            >
-              Crear Producto
-            </button>
-          </form>
-        </div>
+          </div>
+
+          <button
+            className="form-btn-primary"
+            onClick={(e) => {
+              e.preventDefault();
+              const productos = {
+                idCategoria: Number(idCategoria),
+                idMarca: Number(idMarca),
+                nombre,
+                descripcion,
+                precioVenta,
+                cantidadDisponible,
+              };
+              mutate(productos, {
+                onSuccess: () => {
+                  irA("/productos");
+                },
+              });
+            }}
+          >
+            Crear Producto
+          </button>
+        </form>
       </div>
-    </>
+    </div>
   );
 };
 

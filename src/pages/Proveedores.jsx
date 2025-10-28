@@ -1,7 +1,6 @@
 import API from "../lib/axiosLocal";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-// import "../css/Proveedores.css";
 
 const Proveedores = () => {
   const irA = useNavigate();
@@ -22,17 +21,16 @@ const Proveedores = () => {
 
   return (
     <>
-      <main className="main">
-        <header className="header">
-          <button className="btn-volver" onClick={() => irA("/home")}>
-            - volver
-          </button>
+      <main className="pagina-container">
+        <header className="pagina-header">
           <h1>Listado de Proveedores</h1>
-          <button className="btn-crear" onClick={() => irA("/crearProveedor")}>
+          <button
+            className="btn-crear"
+            onClick={() => irA("/proveedores/crearProveedor")}
+          >
             Crear Proveedor
           </button>
         </header>
-
         <section className="grid">
           {data?.Proveedor?.map((proveedor) => (
             <article key={proveedor.codProveedor} className="card">

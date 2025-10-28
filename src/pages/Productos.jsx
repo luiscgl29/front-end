@@ -1,10 +1,17 @@
+import { useState } from "react";
 import API from "../lib/axiosLocal";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import "../css/Productos.css";
 
 const Productos = () => {
   const irA = useNavigate();
+  const [productoSeleccionado, setProductoSeleccionado] = useState(null);
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [codigo, setCodigo] = useState("");
+  const [error, setError] = useState("");
+
+  const CODIGO_ACCESO = "AS2025";
+
   const { data, isLoading } = useQuery({
     queryFn: async () => {
       try {
@@ -12,6 +19,7 @@ const Productos = () => {
         return respuesta.data?.Producto || [];
       } catch (e) {
         console.log(e);
+        return [];
       }
     },
     queryKey: ["productos"],
@@ -21,29 +29,89 @@ const Productos = () => {
     return <h1 className="loading">Cargando...</h1>;
   }
 
+  const productoEditar = (producto) => {
+    setProductoSeleccionado(producto);
+    setMostrarModal(true);
+    setError("");
+    setCodigo("");
+  };
+
+  const verificarCodigo = (e) => {
+    e.preventDefault();
+    if (codigo === CODIGO_ACCESO) {
+      irA(`/productos/editar/${productoSeleccionado.idProducto}`);
+    } else {
+      setError("Código incorrecto");
+      setCodigo("");
+    }
+  };
+
   return (
     <>
-      <main className="main">
-        <header className="header">
-          <button className="btn-volver" onClick={() => irA("/home")}>
-            ⬅ Volver
-          </button>
+      <main className="pagina-container">
+        <header className="pagina-header">
           <h1>Inventario de Productos</h1>
-          <button className="btn-crear" onClick={() => irA("/productos/crear")}>
-            Crear Producto
-          </button>
+          <div>
+            <button onClick={() => irA("/productos/crear")}>
+              Crear Producto
+            </button>
+          </div>
         </header>
-
-        <section className="grid">
+        <section className="productos-grid">
           {data?.map((producto) => (
-            <article key={producto.idProducto} className="card">
+            <article key={producto.idProducto} className="producto-card">
               <h2>{producto.nombre}</h2>
               <p className="descripcion">{producto.descripcion}</p>
               <p className="precio">Q{producto.precioVenta}</p>
-              <p className="cantidad">{producto.cantidadDisponible}</p>
+              <p className="cantidad">Stock: {producto.cantidadDisponible}</p>
+              <button
+                className="btn-editar"
+                onClick={() => productoEditar(producto)}
+              >
+                Editar Producto
+              </button>
             </article>
           ))}
         </section>
+
+        {/* Modal para código de acceso */}
+        {mostrarModal && (
+          <div className="modal-overlay" onClick={() => setMostrarModal(false)}>
+            <div
+              className="caja-productos modal-contenido"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 className="titulo-formulario">Verificación de Acceso</h2>
+              <p className="modal-producto-nombre">
+                Producto: <strong>{productoSeleccionado?.nombre}</strong>
+              </p>
+              <form onSubmit={verificarCodigo}>
+                <label className="label-producto">
+                  Ingrese el código de acceso:
+                </label>
+                <input
+                  className="input-producto"
+                  type="password"
+                  value={codigo}
+                  onChange={(e) => setCodigo(e.target.value)}
+                  placeholder="Código de acceso"
+                  autoFocus
+                />
+                {error && <p className="modal-error">{error}</p>}
+                <button className="boton-producto" type="submit">
+                  Verificar
+                </button>
+                <button
+                  className="boton-producto btn-cancelar"
+                  type="button"
+                  onClick={() => setMostrarModal(false)}
+                >
+                  Cancelar
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
       </main>
     </>
   );
