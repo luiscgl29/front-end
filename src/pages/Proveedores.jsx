@@ -26,7 +26,7 @@ const Proveedores = () => {
           <h1>Listado de Proveedores</h1>
           <button
             className="btn-crear"
-            onClick={() => irA("/proveedores/crearProveedor")}
+            onClick={() => irA("/proveedores/crear")}
           >
             Crear Proveedor
           </button>

@@ -54,7 +54,7 @@ function App() {
           {/* Proveedores */}
           <Route path="proveedores">
             <Route index={true} element={<Proveedores />} />
-            <Route path="crearProveedor" element={<CrearProveedor />} />
+            <Route path="crear" element={<CrearProveedor />} />
           </Route>
         </Route>
         <Route element={<AccesosVendedor />}>

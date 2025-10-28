@@ -182,7 +182,7 @@ const Compras = () => {
                   <td>{l.idLote}</td>
                   <td>{l.producto?.nombre || "Sin nombre"}</td>
                   <td>{l.cantidadTotal || 0}</td>
-                  <td>Q. {l.precioCompra?.toFixed(2)}</td>
+                  <td>Q. {Number(l.precioCompra || 0).toFixed(2)}</td>
                   <td>
                     <input
                       type="number"
@@ -199,7 +199,7 @@ const Compras = () => {
                           parseInt(
                             document.getElementById(`cant-${l.idLote}`).value
                           ),
-                          Number(l.precioCompra)
+                          Number(l.precioCompra || 0)
                         )
                       }
                     >

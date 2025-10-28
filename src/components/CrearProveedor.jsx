@@ -16,7 +16,10 @@ const CrearProveedor = () => {
   const { mutate } = useMutation({
     mutationFn: async (proveedores) => {
       try {
-        const respuesta = await API.post("/proveedores", productos);
+        const respuesta = await API.post("/proveedores", {
+          nombreEmpresa,
+          telefono,
+        });
       } catch (e) {
         console.error(e);
       }
@@ -58,7 +61,7 @@ const CrearProveedor = () => {
               onClick={(e) => {
                 e.preventDefault();
                 const proveedores = {
-                  nombre,
+                  nombreEmpresa,
                   telefono,
                 };
                 mutate(proveedores);
