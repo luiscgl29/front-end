@@ -138,6 +138,16 @@ const CrearEmpleado = () => {
           >
             Crear Empleado
           </button>
+          <button
+            className="form-btn-secondary"
+            onClick={(e) => {
+              e.preventDefault();
+              irA("/");
+            }}
+            style={{ backgroundColor: "#6c757d" }}
+          >
+            Cancelar
+          </button>
         </form>
       </div>
     </div>

@@ -7,8 +7,10 @@ import CrearProducto from "./components/CrearProducto.jsx";
 import EditarProducto from "./components/EditarProducto.jsx";
 import Clientes from "./pages/Clientes.jsx";
 import CrearCliente from "./components/CrearCliente.jsx";
+import EditarCliente from "./components/EditarCliente.jsx";
 import Proveedores from "./pages/Proveedores.jsx";
 import CrearProveedor from "./components/CrearProveedor.jsx";
+import EditarProveedor from "./components/EditarProveedor.jsx";
 import Compras from "./pages/Compras.jsx";
 import Ventas from "./pages/Ventas.jsx";
 import Menu from "./pages/autentificacion/Menu.jsx";
@@ -55,6 +57,7 @@ function App() {
           <Route path="proveedores">
             <Route index={true} element={<Proveedores />} />
             <Route path="crear" element={<CrearProveedor />} />
+            <Route path="editar/:id" element={<EditarProveedor />} />
           </Route>
         </Route>
         <Route element={<AccesosVendedor />}>
@@ -62,6 +65,7 @@ function App() {
           <Route path="clientes">
             <Route index={true} element={<Clientes />} />
             <Route path="crearCliente" element={<CrearCliente />} />
+            <Route path="editar/:id" element={<EditarCliente />} />
           </Route>
           {/* Ventas */}
           <Route path="ventas" element={<Ventas />} />

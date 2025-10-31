@@ -53,7 +53,6 @@ const Compras = () => {
         nombreEmpresa: "",
         telefono: "",
       });
-      // Seleccionar automáticamente el nuevo proveedor
       if (data?.proveedor?.codProveedor) {
         setProveedor(data.proveedor.codProveedor.toString());
       }
@@ -75,7 +74,13 @@ const Compras = () => {
     });
   };
 
-  const agregarLote = (lote, cantidad, precio) => {
+  const agregarLote = (lote, cantidad, precioIngresado) => {
+    // Validar que el precio sea válido
+    if (!precioIngresado || precioIngresado <= 0) {
+      alert("⚠️ Por favor ingrese un precio válido mayor a 0");
+      return;
+    }
+
     const existente = carrito.find((p) => p.idLote === lote.idLote);
     if (existente) {
       const nuevaCantidad = existente.cantidadComprada + cantidad;
@@ -85,7 +90,8 @@ const Compras = () => {
             ? {
                 ...p,
                 cantidadComprada: nuevaCantidad,
-                montoTotal: nuevaCantidad * precio,
+                precioCompra: precioIngresado, // Actualizar con el nuevo precio
+                montoTotal: nuevaCantidad * precioIngresado,
               }
             : p
         )
@@ -96,10 +102,13 @@ const Compras = () => {
         {
           idLote: lote.idLote,
           idProducto: lote.idProducto,
-          nombre: lote.producto?.nombre || "Sin nombre",
+          nombrePaquete: lote.nombrePaquete || "Paquete sin nombre",
+          nombreProducto: lote.producto?.nombre || "Sin nombre",
+          unidadesPorPaquete: lote.cantidadTotal,
           cantidadComprada: cantidad,
-          precioCompra: precio,
-          montoTotal: cantidad * precio,
+          precioCompra: precioIngresado,
+          precioAnterior: Number(lote.precioCompra || 0), // Guardar precio de referencia
+          montoTotal: cantidad * precioIngresado,
         },
       ]);
     }
@@ -109,6 +118,48 @@ const Compras = () => {
     setCarrito(carrito.filter((p) => p.idLote !== idLote));
   };
 
+  // 👇 Nueva función para actualizar precio en el carrito
+  const actualizarPrecioCarrito = (idLote, nuevoPrecio) => {
+    const precio = Number(nuevoPrecio);
+    if (precio <= 0) {
+      alert("⚠️ El precio debe ser mayor a 0");
+      return;
+    }
+
+    setCarrito(
+      carrito.map((p) =>
+        p.idLote === idLote
+          ? {
+              ...p,
+              precioCompra: precio,
+              montoTotal: p.cantidadComprada * precio,
+            }
+          : p
+      )
+    );
+  };
+
+  // 👇 Nueva función para actualizar cantidad en el carrito
+  const actualizarCantidadCarrito = (idLote, nuevaCantidad) => {
+    const cantidad = Number(nuevaCantidad);
+    if (cantidad <= 0) {
+      eliminarLote(idLote);
+      return;
+    }
+
+    setCarrito(
+      carrito.map((p) =>
+        p.idLote === idLote
+          ? {
+              ...p,
+              cantidadComprada: cantidad,
+              montoTotal: cantidad * p.precioCompra,
+            }
+          : p
+      )
+    );
+  };
+
   const subtotal = carrito.reduce((acc, p) => acc + p.montoTotal, 0);
   const iva = subtotal * 0.12;
   const totalCompra = subtotal + iva;
@@ -116,6 +167,7 @@ const Compras = () => {
   const mutationCompra = useMutation({
     mutationFn: async () => {
       if (carrito.length === 0) throw new Error("El carrito está vacío.");
+      if (!proveedor) throw new Error("Debe seleccionar un proveedor.");
 
       const compra = {
         idUsuario: data?.usuario?.usuarioId,
@@ -135,6 +187,8 @@ const Compras = () => {
       alert("✅ Compra registrada con éxito y stock actualizado.");
       setCarrito([]);
       setProveedor("");
+      queryClient.invalidateQueries(["lotes"]);
+      queryClient.invalidateQueries(["productos"]);
     },
     onError: (err) => {
       const msg = err.response?.data?.mensaje || err.message;
@@ -144,121 +198,343 @@ const Compras = () => {
 
   if (cargandoLotes || cargandoProveedores) return <h2>Cargando datos...</h2>;
 
-  const filtrados = lotes.filter((l) =>
-    (l.producto?.nombre || "").toLowerCase().includes(busqueda.toLowerCase())
+  const filtrados = lotes.filter(
+    (l) =>
+      (l.producto?.nombre || "")
+        .toLowerCase()
+        .includes(busqueda.toLowerCase()) ||
+      (l.nombrePaquete || "").toLowerCase().includes(busqueda.toLowerCase())
   );
 
   return (
     <>
       <main className="main">
         <header className="header">
-          <h1>Registrar Compra</h1>
+          <h1>📦 Registrar Compra de Lotes/Paquetes</h1>
+          <p style={{ fontSize: "14px", color: "#666", marginTop: "5px" }}>
+            Los precios mostrados son de referencia. Puede ajustarlos según el
+            proveedor.
+          </p>
         </header>
 
         <div className="buscador">
           <input
             type="text"
-            placeholder="Buscar producto o lote..."
+            placeholder="Buscar por nombre de paquete o producto..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
           />
         </div>
 
         <section className="tabla-productos">
+          <h2>📋 Lotes/Paquetes Disponibles</h2>
           <table>
             <thead>
               <tr>
                 <th>ID Lote</th>
-                <th>Producto</th>
-                <th>Cant. Total</th>
-                <th>Precio Compra</th>
-                <th>Agregar Cantidad</th>
+                <th>Nombre del Paquete</th>
+                <th>Producto Base</th>
+                <th>
+                  Unidades por Paquete
+                  <br />
+                  <small style={{ fontWeight: "normal", color: "#666" }}>
+                    (cant. incluidas)
+                  </small>
+                </th>
+                <th>
+                  Precio Anterior
+                  <br />
+                  <small style={{ fontWeight: "normal", color: "#666" }}>
+                    (referencia)
+                  </small>
+                </th>
+                <th>
+                  Precio Actual de Compra
+                  <br />
+                  <small style={{ fontWeight: "normal", color: "#666" }}>
+                    (editable)
+                  </small>
+                </th>
+                <th>Cantidad de Paquetes</th>
                 <th>Acción</th>
               </tr>
             </thead>
             <tbody>
-              {filtrados.map((l) => (
-                <tr key={l.idLote}>
-                  <td>{l.idLote}</td>
-                  <td>{l.producto?.nombre || "Sin nombre"}</td>
-                  <td>{l.cantidadTotal || 0}</td>
-                  <td>Q. {Number(l.precioCompra || 0).toFixed(2)}</td>
-                  <td>
-                    <input
-                      type="number"
-                      min="1"
-                      defaultValue="1"
-                      id={`cant-${l.idLote}`}
-                    />
-                  </td>
-                  <td>
-                    <button
-                      onClick={() =>
-                        agregarLote(
-                          l,
-                          parseInt(
-                            document.getElementById(`cant-${l.idLote}`).value
-                          ),
-                          Number(l.precioCompra || 0)
-                        )
-                      }
-                    >
-                      ➕ Agregar
-                    </button>
+              {filtrados.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan="8"
+                    style={{ textAlign: "center", padding: "20px" }}
+                  >
+                    No se encontraron lotes/paquetes
                   </td>
                 </tr>
-              ))}
+              ) : (
+                filtrados.map((l) => (
+                  <tr key={l.idLote}>
+                    <td>{l.idLote}</td>
+                    <td>
+                      <strong>{l.nombrePaquete || "Sin nombre"}</strong>
+                    </td>
+                    <td>{l.producto?.nombre || "Sin nombre"}</td>
+                    <td style={{ textAlign: "center" }}>
+                      <span
+                        style={{
+                          backgroundColor: "#e3f2fd",
+                          padding: "4px 8px",
+                          borderRadius: "4px",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {l.cantidadTotal || 0} unidades
+                      </span>
+                    </td>
+                    <td style={{ color: "#757575", textAlign: "center" }}>
+                      <small>Ref:</small> Q.{" "}
+                      {Number(l.precioCompra || 0).toFixed(2)}
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0.01"
+                        defaultValue={Number(l.precioCompra || 0).toFixed(2)}
+                        id={`precio-${l.idLote}`}
+                        style={{
+                          width: "100px",
+                          padding: "6px",
+                          textAlign: "right",
+                          border: "2px solid #2196f3",
+                          borderRadius: "4px",
+                          fontWeight: "bold",
+                        }}
+                        placeholder="0.00"
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        min="1"
+                        defaultValue="1"
+                        id={`cant-${l.idLote}`}
+                        style={{
+                          width: "70px",
+                          padding: "6px",
+                          textAlign: "center",
+                        }}
+                      />
+                    </td>
+                    <td>
+                      <button
+                        onClick={() => {
+                          const precio = Number(
+                            document.getElementById(`precio-${l.idLote}`).value
+                          );
+                          const cantidad =
+                            parseInt(
+                              document.getElementById(`cant-${l.idLote}`).value
+                            ) || 1;
+                          agregarLote(l, cantidad, precio);
+                        }}
+                        style={{
+                          backgroundColor: "#2196f3",
+                          color: "white",
+                          border: "none",
+                          padding: "8px 12px",
+                          borderRadius: "4px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        ➕ Agregar
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </section>
 
         <section className="carrito">
-          <h2>Lotes Agregados</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>ID Lote</th>
-                <th>Producto</th>
-                <th>Cantidad</th>
-                <th>Precio</th>
-                <th>Total</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              {carrito.map((p) => (
-                <tr key={p.idLote}>
-                  <td>{p.idLote}</td>
-                  <td>{p.nombre}</td>
-                  <td>{p.cantidadComprada}</td>
-                  <td>Q. {p.precioCompra.toFixed(2)}</td>
-                  <td>Q. {p.montoTotal.toFixed(2)}</td>
-                  <td>
-                    <button onClick={() => eliminarLote(p.idLote)}>
-                      🗑 Eliminar
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <h2>🛒 Paquetes en el Carrito de Compra</h2>
+          {carrito.length === 0 ? (
+            <p style={{ textAlign: "center", color: "#666", padding: "20px" }}>
+              No hay paquetes en el carrito. Agregue paquetes desde la tabla
+              superior.
+            </p>
+          ) : (
+            <>
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID Lote</th>
+                    <th>Nombre del Paquete</th>
+                    <th>Producto Base</th>
+                    <th>Cantidad de Paquetes</th>
+                    <th>Precio por Paquete</th>
+                    <th>
+                      Unidades Totales
+                      <br />
+                      <small style={{ fontWeight: "normal", color: "#666" }}>
+                        (al inventario)
+                      </small>
+                    </th>
+                    <th>Subtotal</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {carrito.map((p) => {
+                    const cambioEnPrecio = p.precioCompra !== p.precioAnterior;
+                    const aumentoPrecio = p.precioCompra > p.precioAnterior;
 
-          <div className="totales">
-            <p>Subtotal: Q. {subtotal.toFixed(2)}</p>
-            <p>IVA (12%): Q. {iva.toFixed(2)}</p>
-            <h3>Total: Q. {totalCompra.toFixed(2)}</h3>
-          </div>
+                    return (
+                      <tr key={p.idLote}>
+                        <td>{p.idLote}</td>
+                        <td>
+                          <strong>{p.nombrePaquete}</strong>
+                        </td>
+                        <td>{p.nombreProducto}</td>
+                        <td style={{ textAlign: "center" }}>
+                          <input
+                            type="number"
+                            min="1"
+                            value={p.cantidadComprada}
+                            onChange={(e) =>
+                              actualizarCantidadCarrito(
+                                p.idLote,
+                                e.target.value
+                              )
+                            }
+                            style={{
+                              width: "60px",
+                              padding: "4px",
+                              textAlign: "center",
+                              border: "1px solid #ddd",
+                              borderRadius: "4px",
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              alignItems: "center",
+                            }}
+                          >
+                            <input
+                              type="number"
+                              step="0.01"
+                              min="0.01"
+                              value={p.precioCompra}
+                              onChange={(e) =>
+                                actualizarPrecioCarrito(
+                                  p.idLote,
+                                  e.target.value
+                                )
+                              }
+                              style={{
+                                width: "90px",
+                                padding: "4px",
+                                textAlign: "right",
+                                border: "2px solid #4caf50",
+                                borderRadius: "4px",
+                                fontWeight: "bold",
+                              }}
+                            />
+                            {cambioEnPrecio && (
+                              <small
+                                style={{
+                                  color: aumentoPrecio ? "#f44336" : "#4caf50",
+                                  fontSize: "11px",
+                                  marginTop: "2px",
+                                }}
+                              >
+                                {aumentoPrecio ? "⬆️" : "⬇️"} Antes: Q.{" "}
+                                {p.precioAnterior.toFixed(2)}
+                              </small>
+                            )}
+                          </div>
+                        </td>
+                        <td
+                          style={{
+                            textAlign: "center",
+                            backgroundColor: "#e8f5e9",
+                            fontWeight: "bold",
+                          }}
+                        >
+                          +{p.cantidadComprada * p.unidadesPorPaquete} unidades
+                          <br />
+                          <small
+                            style={{ color: "#666", fontWeight: "normal" }}
+                          >
+                            ({p.cantidadComprada} × {p.unidadesPorPaquete})
+                          </small>
+                        </td>
+                        <td style={{ fontWeight: "bold", fontSize: "16px" }}>
+                          Q. {p.montoTotal.toFixed(2)}
+                        </td>
+                        <td>
+                          <button
+                            onClick={() => eliminarLote(p.idLote)}
+                            style={{
+                              backgroundColor: "#f44336",
+                              color: "white",
+                              border: "none",
+                              padding: "6px 10px",
+                              borderRadius: "4px",
+                              cursor: "pointer",
+                            }}
+                          >
+                            🗑 Eliminar
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
 
-          <div className="pago">
-            <h3>Información del Proveedor</h3>
+              <div
+                className="totales"
+                style={{
+                  marginTop: "20px",
+                  padding: "15px",
+                  backgroundColor: "#f5f5f5",
+                  borderRadius: "8px",
+                }}
+              >
+                <p style={{ fontSize: "16px" }}>
+                  Subtotal: Q. {subtotal.toFixed(2)}
+                </p>
+                <p style={{ fontSize: "16px" }}>
+                  IVA (12%): Q. {iva.toFixed(2)}
+                </p>
+                <h3
+                  style={{
+                    fontSize: "24px",
+                    color: "#2e7d32",
+                    marginTop: "10px",
+                  }}
+                >
+                  Total de la Compra: Q. {totalCompra.toFixed(2)}
+                </h3>
+              </div>
+            </>
+          )}
 
-            <label htmlFor="proveedor">Seleccionar Proveedor:</label>
+          <div className="pago" style={{ marginTop: "20px" }}>
+            <h3>📋 Información de la Compra</h3>
+
+            <label htmlFor="proveedor">Proveedor: *</label>
             <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
               <select
                 id="proveedor"
                 value={proveedor}
                 onChange={(e) => setProveedor(e.target.value)}
                 style={{ flex: 1 }}
+                required
               >
                 <option value="">-- Seleccione un proveedor --</option>
                 {proveedores.map((prov) => (
@@ -355,7 +631,7 @@ const Compras = () => {
               </div>
             )}
 
-            <label htmlFor="fechaCompra">Fecha:</label>
+            <label htmlFor="fechaCompra">Fecha de la Compra:</label>
             <input
               type="date"
               id="fechaCompra"
@@ -364,8 +640,29 @@ const Compras = () => {
             />
           </div>
 
-          <button onClick={() => mutationCompra.mutate()}>
-            💾 Registrar Compra
+          <button
+            onClick={() => mutationCompra.mutate()}
+            disabled={
+              carrito.length === 0 || !proveedor || mutationCompra.isPending
+            }
+            style={{
+              width: "100%",
+              padding: "15px",
+              fontSize: "16px",
+              fontWeight: "bold",
+              backgroundColor:
+                carrito.length === 0 || !proveedor ? "#ccc" : "#4caf50",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor:
+                carrito.length === 0 || !proveedor ? "not-allowed" : "pointer",
+              marginTop: "20px",
+            }}
+          >
+            {mutationCompra.isPending
+              ? "⏳ Procesando..."
+              : "💾 Confirmar y Registrar Compra"}
           </button>
         </section>
       </main>
@@ -374,3 +671,382 @@ const Compras = () => {
 };
 
 export default Compras;
+
+// PAGINA ANTERIOR COMPRA
+
+// import { useState } from "react";
+// import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+// import { useNavigate } from "react-router-dom";
+// import { useAutentificacion } from "./autentificacion/hookAutentificacion";
+// import API from "../lib/axiosLocal";
+
+// const Compras = () => {
+//   const irA = useNavigate();
+//   const { data } = useAutentificacion();
+//   const queryClient = useQueryClient();
+
+//   const [busqueda, setBusqueda] = useState("");
+//   const [carrito, setCarrito] = useState([]);
+//   const [proveedor, setProveedor] = useState("");
+//   const [fechaCompra, setFechaCompra] = useState(
+//     new Date().toISOString().split("T")[0]
+//   );
+
+//   // Estados para el formulario de crear proveedor
+//   const [mostrarFormProveedor, setMostrarFormProveedor] = useState(false);
+//   const [nuevoProveedor, setNuevoProveedor] = useState({
+//     nombreEmpresa: "",
+//     telefono: "",
+//   });
+
+//   const { data: lotes, isLoading: cargandoLotes } = useQuery({
+//     queryKey: ["lotes"],
+//     queryFn: async () => {
+//       const res = await API.get("/lotes");
+//       return res.data?.Lotes || [];
+//     },
+//   });
+
+//   const { data: proveedores, isLoading: cargandoProveedores } = useQuery({
+//     queryKey: ["proveedores"],
+//     queryFn: async () => {
+//       const res = await API.get("/proveedores");
+//       return res.data?.Proveedor || [];
+//     },
+//   });
+
+//   // Mutation para crear proveedor
+//   const mutationCrearProveedor = useMutation({
+//     mutationFn: async (proveedorData) => {
+//       const res = await API.post("/proveedores", proveedorData);
+//       return res.data;
+//     },
+//     onSuccess: (data) => {
+//       alert("✅ Proveedor creado con éxito");
+//       queryClient.invalidateQueries(["proveedores"]);
+//       setMostrarFormProveedor(false);
+//       setNuevoProveedor({
+//         nombreEmpresa: "",
+//         telefono: "",
+//       });
+//       // Seleccionar automáticamente el nuevo proveedor
+//       if (data?.proveedor?.codProveedor) {
+//         setProveedor(data.proveedor.codProveedor.toString());
+//       }
+//     },
+//     onError: (err) => {
+//       const msg = err.response?.data?.mensaje || err.message;
+//       alert("❌ Error al crear proveedor: " + msg);
+//     },
+//   });
+
+//   const handleCrearProveedor = () => {
+//     if (!nuevoProveedor.nombreEmpresa.trim()) {
+//       alert("El nombre de la empresa es obligatorio.");
+//       return;
+//     }
+//     mutationCrearProveedor.mutate({
+//       nombreEmpresa: nuevoProveedor.nombreEmpresa.trim(),
+//       telefono: nuevoProveedor.telefono.trim() || null,
+//     });
+//   };
+
+//   const agregarLote = (lote, cantidad, precio) => {
+//     const existente = carrito.find((p) => p.idLote === lote.idLote);
+//     if (existente) {
+//       const nuevaCantidad = existente.cantidadComprada + cantidad;
+//       setCarrito(
+//         carrito.map((p) =>
+//           p.idLote === lote.idLote
+//             ? {
+//                 ...p,
+//                 cantidadComprada: nuevaCantidad,
+//                 montoTotal: nuevaCantidad * precio,
+//               }
+//             : p
+//         )
+//       );
+//     } else {
+//       setCarrito([
+//         ...carrito,
+//         {
+//           idLote: lote.idLote,
+//           idProducto: lote.idProducto,
+//           nombre: lote.producto?.nombre || "Sin nombre",
+//           cantidadComprada: cantidad,
+//           precioCompra: precio,
+//           montoTotal: cantidad * precio,
+//         },
+//       ]);
+//     }
+//   };
+
+//   const eliminarLote = (idLote) => {
+//     setCarrito(carrito.filter((p) => p.idLote !== idLote));
+//   };
+
+//   const subtotal = carrito.reduce((acc, p) => acc + p.montoTotal, 0);
+//   const iva = subtotal * 0.12;
+//   const totalCompra = subtotal + iva;
+
+//   const mutationCompra = useMutation({
+//     mutationFn: async () => {
+//       if (carrito.length === 0) throw new Error("El carrito está vacío.");
+
+//       const compra = {
+//         idUsuario: data?.usuario?.usuarioId,
+//         codProveedor: Number(proveedor),
+//         totalCompra: totalCompra,
+//         compradetalle: carrito.map((p) => ({
+//           idLote: p.idLote,
+//           cantidadComprada: p.cantidadComprada,
+//           precioCompra: p.precioCompra,
+//         })),
+//       };
+
+//       const res = await API.post("/compras", compra);
+//       return res.data;
+//     },
+//     onSuccess: () => {
+//       alert("✅ Compra registrada con éxito y stock actualizado.");
+//       setCarrito([]);
+//       setProveedor("");
+//     },
+//     onError: (err) => {
+//       const msg = err.response?.data?.mensaje || err.message;
+//       alert("❌ Error al registrar la compra: " + msg);
+//     },
+//   });
+
+//   if (cargandoLotes || cargandoProveedores) return <h2>Cargando datos...</h2>;
+
+//   const filtrados = lotes.filter((l) =>
+//     (l.producto?.nombre || "").toLowerCase().includes(busqueda.toLowerCase())
+//   );
+
+//   return (
+//     <>
+//       <main className="main">
+//         <header className="header">
+//           <h1>Registrar Compra</h1>
+//         </header>
+
+//         <div className="buscador">
+//           <input
+//             type="text"
+//             placeholder="Buscar producto o lote..."
+//             value={busqueda}
+//             onChange={(e) => setBusqueda(e.target.value)}
+//           />
+//         </div>
+
+//         <section className="tabla-productos">
+//           <table>
+//             <thead>
+//               <tr>
+//                 <th>ID Lote</th>
+//                 <th>Producto</th>
+//                 <th>Cant. Total</th>
+//                 <th>Precio Compra</th>
+//                 <th>Agregar Cantidad</th>
+//                 <th>Acción</th>
+//               </tr>
+//             </thead>
+//             <tbody>
+//               {filtrados.map((l) => (
+//                 <tr key={l.idLote}>
+//                   <td>{l.idLote}</td>
+//                   <td>{l.producto?.nombre || "Sin nombre"}</td>
+//                   <td>{l.cantidadTotal || 0}</td>
+//                   <td>Q. {Number(l.precioCompra || 0).toFixed(2)}</td>
+//                   <td>
+//                     <input
+//                       type="number"
+//                       min="1"
+//                       defaultValue="1"
+//                       id={`cant-${l.idLote}`}
+//                     />
+//                   </td>
+//                   <td>
+//                     <button
+//                       onClick={() =>
+//                         agregarLote(
+//                           l,
+//                           parseInt(
+//                             document.getElementById(`cant-${l.idLote}`).value
+//                           ),
+//                           Number(l.precioCompra || 0)
+//                         )
+//                       }
+//                     >
+//                       ➕ Agregar
+//                     </button>
+//                   </td>
+//                 </tr>
+//               ))}
+//             </tbody>
+//           </table>
+//         </section>
+
+//         <section className="carrito">
+//           <h2>Lotes Agregados</h2>
+//           <table>
+//             <thead>
+//               <tr>
+//                 <th>ID Lote</th>
+//                 <th>Producto</th>
+//                 <th>Cantidad</th>
+//                 <th>Precio</th>
+//                 <th>Total</th>
+//                 <th>Acción</th>
+//               </tr>
+//             </thead>
+//             <tbody>
+//               {carrito.map((p) => (
+//                 <tr key={p.idLote}>
+//                   <td>{p.idLote}</td>
+//                   <td>{p.nombre}</td>
+//                   <td>{p.cantidadComprada}</td>
+//                   <td>Q. {p.precioCompra.toFixed(2)}</td>
+//                   <td>Q. {p.montoTotal.toFixed(2)}</td>
+//                   <td>
+//                     <button onClick={() => eliminarLote(p.idLote)}>
+//                       🗑 Eliminar
+//                     </button>
+//                   </td>
+//                 </tr>
+//               ))}
+//             </tbody>
+//           </table>
+
+//           <div className="totales">
+//             <p>Subtotal: Q. {subtotal.toFixed(2)}</p>
+//             <p>IVA (12%): Q. {iva.toFixed(2)}</p>
+//             <h3>Total: Q. {totalCompra.toFixed(2)}</h3>
+//           </div>
+
+//           <div className="pago">
+//             <h3>Información del Proveedor</h3>
+
+//             <label htmlFor="proveedor">Seleccionar Proveedor:</label>
+//             <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
+//               <select
+//                 id="proveedor"
+//                 value={proveedor}
+//                 onChange={(e) => setProveedor(e.target.value)}
+//                 style={{ flex: 1 }}
+//               >
+//                 <option value="">-- Seleccione un proveedor --</option>
+//                 {proveedores.map((prov) => (
+//                   <option key={prov.codProveedor} value={prov.codProveedor}>
+//                     {prov.nombreEmpresa}
+//                   </option>
+//                 ))}
+//               </select>
+//               <button
+//                 type="button"
+//                 onClick={() => setMostrarFormProveedor(!mostrarFormProveedor)}
+//                 style={{
+//                   padding: "8px 16px",
+//                   backgroundColor: mostrarFormProveedor ? "#6c757d" : "#28a745",
+//                   color: "white",
+//                   border: "none",
+//                   borderRadius: "4px",
+//                   cursor: "pointer",
+//                   whiteSpace: "nowrap",
+//                 }}
+//               >
+//                 {mostrarFormProveedor ? "❌ Cancelar" : "➕ Crear Proveedor"}
+//               </button>
+//             </div>
+
+//             {/* FORMULARIO CREAR PROVEEDOR */}
+//             {mostrarFormProveedor && (
+//               <div
+//                 style={{
+//                   marginBottom: "20px",
+//                   padding: "15px",
+//                   border: "2px solid #28a745",
+//                   borderRadius: "8px",
+//                   backgroundColor: "#f8f9fa",
+//                 }}
+//               >
+//                 <h4 style={{ marginTop: 0, color: "#28a745" }}>
+//                   Nuevo Proveedor
+//                 </h4>
+
+//                 <label htmlFor="nuevoNombreEmpresa">
+//                   Nombre de la Empresa: *
+//                 </label>
+//                 <input
+//                   id="nuevoNombreEmpresa"
+//                   type="text"
+//                   placeholder="Nombre de la empresa"
+//                   value={nuevoProveedor.nombreEmpresa}
+//                   onChange={(e) =>
+//                     setNuevoProveedor({
+//                       ...nuevoProveedor,
+//                       nombreEmpresa: e.target.value,
+//                     })
+//                   }
+//                   maxLength={45}
+//                   required
+//                 />
+
+//                 <label htmlFor="nuevoTelefono">Teléfono:</label>
+//                 <input
+//                   id="nuevoTelefono"
+//                   type="tel"
+//                   placeholder="Número de teléfono (opcional)"
+//                   value={nuevoProveedor.telefono}
+//                   onChange={(e) =>
+//                     setNuevoProveedor({
+//                       ...nuevoProveedor,
+//                       telefono: e.target.value,
+//                     })
+//                   }
+//                   maxLength={15}
+//                 />
+
+//                 <button
+//                   type="button"
+//                   onClick={handleCrearProveedor}
+//                   disabled={mutationCrearProveedor.isPending}
+//                   style={{
+//                     width: "100%",
+//                     padding: "10px",
+//                     backgroundColor: "#28a745",
+//                     color: "white",
+//                     border: "none",
+//                     borderRadius: "4px",
+//                     cursor: "pointer",
+//                     fontWeight: "bold",
+//                     marginTop: "10px",
+//                   }}
+//                 >
+//                   {mutationCrearProveedor.isPending
+//                     ? "Guardando..."
+//                     : "💾 Guardar Proveedor"}
+//                 </button>
+//               </div>
+//             )}
+
+//             <label htmlFor="fechaCompra">Fecha:</label>
+//             <input
+//               type="date"
+//               id="fechaCompra"
+//               value={fechaCompra}
+//               onChange={(e) => setFechaCompra(e.target.value)}
+//             />
+//           </div>
+
+//           <button onClick={() => mutationCompra.mutate()}>
+//             💾 Registrar Compra
+//           </button>
+//         </section>
+//       </main>
+//     </>
+//   );
+// };
+
+// export default Compras;

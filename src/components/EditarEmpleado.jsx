@@ -69,48 +69,63 @@ const EditarEmpleado = () => {
 
   return (
     <>
-      <div className="productos">
-        <div className="caja-productos">
-          <h2 className="titulo-formulario">Editar Empleado</h2>
+      <div className="form-container">
+        <div className="form-box">
+          <h2 className="form-title">Editar Empleado</h2>
           <form>
-            <select value={idRol} onChange={(e) => setIdRol(e.target.value)}>
-              <option value="">Seleccione el rol</option>
-              {roles?.roles?.map((rol) => (
-                <option key={rol.idRol} value={rol.idRol}>
-                  {rol.nombreRol}
-                </option>
-              ))}
-            </select>
-            <label className="label-producto">Nombre del Empleado: </label>
-            <input
-              className="input-producto"
-              type="text"
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-            />
-            <label className="label-producto">Usuario: </label>
-            <input
-              className="input-producto"
-              type="text"
-              value={user}
-              onChange={(e) => setUser(e.target.value)}
-            />
-            <label className="label-producto">Correo Electrónico: </label>
-            <input
-              className="input-producto"
-              type="email"
-              value={correo}
-              onChange={(e) => setCorreo(e.target.value)}
-            />
-            <label className="label-producto">Salario: </label>
-            <input
-              className="input-producto"
-              type="text"
-              value={salario}
-              onChange={(e) => setSalario(e.target.value)}
-            />
+            <div className="form-group">
+              <label className="form-label">Rol</label>
+              <select
+                className="form-select"
+                value={idRol}
+                onChange={(e) => setIdRol(e.target.value)}
+              >
+                <option value="">Seleccione el rol</option>
+                {roles?.roles?.map((rol) => (
+                  <option key={rol.idRol} value={rol.idRol}>
+                    {rol.nombreRol}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Nombre del Empleado: </label>
+              <input
+                className="form-input"
+                type="text"
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Usuario: </label>
+              <input
+                className="form-input"
+                type="text"
+                value={user}
+                onChange={(e) => setUser(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Correo Electrónico: </label>
+              <input
+                className="form-input"
+                type="email"
+                value={correo}
+                onChange={(e) => setCorreo(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Salario: </label>
+              <input
+                className="form-input"
+                type="text"
+                value={salario}
+                onChange={(e) => setSalario(e.target.value)}
+              />
+            </div>
             <button
-              className="boton-producto"
+              className="form-btn-primary"
               onClick={(e) => {
                 e.preventDefault();
                 const empleado = {
@@ -122,7 +137,7 @@ const EditarEmpleado = () => {
                 };
                 mutate(empleado, {
                   onSuccess: () => {
-                    irA("/");
+                    irA("/empleados");
                   },
                 });
               }}
@@ -130,7 +145,7 @@ const EditarEmpleado = () => {
               Guardar Cambios
             </button>
             <button
-              className="boton-producto"
+              className="form-btn-secondary"
               onClick={(e) => {
                 e.preventDefault();
                 irA("/");

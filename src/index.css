@@ -363,7 +363,7 @@ body {
 /* ============================================
    MODAL
    ============================================ */
-.modal-overlay {
+.modal-editar-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -376,29 +376,109 @@ body {
   z-index: 1000;
 }
 
-.modal-contenido {
+.modal-editar-contenido {
+  background-color: white;
   width: 400px;
   max-width: 90%;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.modal-producto-nombre {
+.modal-editar-titulo {
   text-align: center;
   margin-bottom: 20px;
-  color: #333;
+  color: #1f2937;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.modal-editar-nombre {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #4b5563;
   font-size: 16px;
 }
 
-.modal-producto-nombre strong {
+.modal-editar-nombre strong {
   color: #1d4ed8;
   font-size: 18px;
+  display: block;
+  margin-top: 5px;
 }
 
-.modal-error {
-  color: #dc2626;
-  text-align: center;
-  margin-top: 10px;
+.modal-editar-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.modal-editar-label {
+  color: #374151;
   font-size: 14px;
   font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.modal-editar-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.modal-editar-input:focus {
+  outline: none;
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
+}
+
+.modal-editar-error {
+  color: #dc2626;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px;
+  background-color: #fee2e2;
+  border-radius: 4px;
+}
+
+.modal-editar-botones {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.modal-editar-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-editar-btn-verificar {
+  background-color: #1d4ed8;
+  color: white;
+}
+
+.modal-editar-btn-verificar:hover {
+  background-color: #1e40af;
+}
+
+.modal-editar-btn-cancelar {
+  background-color: #6b7280;
+  color: white;
+}
+
+.modal-editar-btn-cancelar:hover {
+  background-color: #4b5563;
 }
 
 /* ============================================
@@ -690,6 +770,7 @@ body {
   font-size: 14px;
   font-weight: 600;
   color: #374151;
+  /* margin-top: 6px; */
   margin-bottom: 6px;
   display: block;
 }
@@ -810,7 +891,7 @@ body {
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s, transform 0.2s;
-  margin-top: 10px;
+  /* margin-top: 5px; */
 }
 
 .form-btn-secondary:hover {

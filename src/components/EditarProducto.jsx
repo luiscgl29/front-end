@@ -78,67 +78,83 @@ const EditarProducto = () => {
 
   return (
     <>
-      <div className="productos">
-        <div className="caja-productos">
-          <h2 className="titulo-formulario">Editar Producto</h2>
+      <div className="form-container">
+        <div className="form-box">
+          <h2 className="form-title">Editar Producto</h2>
           <form>
-            <select
-              value={idCategoria}
-              onChange={(e) => setIdCategoria(e.target.value)}
-            >
-              <option value="">Seleccione la categoría</option>
-              {categorias?.categorias?.map((categoria) => (
-                <option
-                  key={categoria.idCategoria}
-                  value={categoria.idCategoria}
-                >
-                  {categoria.categoria}
-                </option>
-              ))}
-            </select>
-            <select
-              value={idMarca}
-              onChange={(e) => setIdMarca(e.target.value)}
-            >
-              <option value="">Selecciona la marca</option>
-              {marcas?.marcas?.map((marca) => (
-                <option key={marca.idMarca} value={marca.idMarca}>
-                  {marca.nombre}
-                </option>
-              ))}
-            </select>
-            <label className="label-producto">Nombre del Producto: </label>
-            <input
-              className="input-producto"
-              type="text"
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-            />
-            <label className="label-producto">Descripción del Producto: </label>
-            <input
-              className="input-producto"
-              type="text"
-              value={descripcion}
-              onChange={(e) => setDescripcion(e.target.value)}
-            />
-            <label className="label-producto">
-              Precio de venta del Producto:{" "}
-            </label>
-            <input
-              className="input-producto"
-              type="text"
-              value={precioVenta}
-              onChange={(e) => setPrecioVenta(e.target.value)}
-            />
-            <label className="label-producto">Cantidad del Producto: </label>
-            <input
-              className="input-producto"
-              type="text"
-              value={cantidadDisponible}
-              onChange={(e) => setcantidadDisponible(e.target.value)}
-            />
+            <div className="form-group">
+              <label className="form-label">Categoria</label>
+              <select
+                className="form-select"
+                value={idCategoria}
+                onChange={(e) => setIdCategoria(e.target.value)}
+              >
+                <option value="">Seleccione la categoría</option>
+                {categorias?.categorias?.map((categoria) => (
+                  <option
+                    key={categoria.idCategoria}
+                    value={categoria.idCategoria}
+                  >
+                    {categoria.categoria}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Marca</label>
+              <select
+                className="form-select"
+                value={idMarca}
+                onChange={(e) => setIdMarca(e.target.value)}
+              >
+                <option value="">Selecciona la marca</option>
+                {marcas?.marcas?.map((marca) => (
+                  <option key={marca.idMarca} value={marca.idMarca}>
+                    {marca.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Nombre del Producto: </label>
+              <input
+                className="form-input"
+                type="text"
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Descripción del Producto: </label>
+              <input
+                className="form-input"
+                type="text"
+                value={descripcion}
+                onChange={(e) => setDescripcion(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">
+                Precio de venta del Producto:{" "}
+              </label>
+              <input
+                className="form-input"
+                type="text"
+                value={precioVenta}
+                onChange={(e) => setPrecioVenta(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Cantidad del Producto: </label>
+              <input
+                className="form-input"
+                type="text"
+                value={cantidadDisponible}
+                onChange={(e) => setcantidadDisponible(e.target.value)}
+              />
+            </div>
             <button
-              className="boton-producto"
+              className="form-btn-primary"
               onClick={(e) => {
                 e.preventDefault();
                 const productos = {
@@ -159,7 +175,7 @@ const EditarProducto = () => {
               Guardar Cambios
             </button>
             <button
-              className="boton-producto"
+              className="form-btn-secondary"
               onClick={(e) => {
                 e.preventDefault();
                 irA("/productos");

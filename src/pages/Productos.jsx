@@ -76,38 +76,46 @@ const Productos = () => {
 
         {/* Modal para código de acceso */}
         {mostrarModal && (
-          <div className="modal-overlay" onClick={() => setMostrarModal(false)}>
+          <div
+            className="modal-editar-overlay"
+            onClick={() => setMostrarModal(false)}
+          >
             <div
-              className="caja-productos modal-contenido"
+              className="modal-editar-contenido"
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="titulo-formulario">Verificación de Acceso</h2>
-              <p className="modal-producto-nombre">
+              <h2 className="modal-editar-titulo">Verificación de Acceso</h2>
+              <p className="modal-editar-nombre">
                 Producto: <strong>{productoSeleccionado?.nombre}</strong>
               </p>
-              <form onSubmit={verificarCodigo}>
-                <label className="label-producto">
+              <form className="modal-editar-form" onSubmit={verificarCodigo}>
+                <label className="modal-editar-form">
                   Ingrese el código de acceso:
                 </label>
                 <input
-                  className="input-producto"
+                  className="modal-editar-input"
                   type="password"
                   value={codigo}
                   onChange={(e) => setCodigo(e.target.value)}
                   placeholder="Código de acceso"
                   autoFocus
                 />
-                {error && <p className="modal-error">{error}</p>}
-                <button className="boton-producto" type="submit">
-                  Verificar
-                </button>
-                <button
-                  className="boton-producto btn-cancelar"
-                  type="button"
-                  onClick={() => setMostrarModal(false)}
-                >
-                  Cancelar
-                </button>
+                {error && <p className="modal-editar-error">{error}</p>}
+                <div className="modal-editar-botones">
+                  <button
+                    className="modal-editar-btn modal-editar-btn-verificar"
+                    type="submit"
+                  >
+                    Verificar
+                  </button>
+                  <button
+                    className="modal-editar-btn modal-editar-btn-cancelar"
+                    type="button"
+                    onClick={() => setMostrarModal(false)}
+                  >
+                    Cancelar
+                  </button>
+                </div>
               </form>
             </div>
           </div>

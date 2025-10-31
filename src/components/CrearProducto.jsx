@@ -149,6 +149,16 @@ const CrearProducto = () => {
           >
             Crear Producto
           </button>
+          <button
+            className="form-btn-secondary"
+            onClick={(e) => {
+              e.preventDefault();
+              irA("/productos");
+            }}
+            style={{ backgroundColor: "#6c757d" }}
+          >
+            Cancelar
+          </button>
         </form>
       </div>
     </div>

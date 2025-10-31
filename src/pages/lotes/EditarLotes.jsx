@@ -69,92 +69,102 @@ const EditarLote = () => {
 
   return (
     <>
-      <div className="productos">
-        <div className="caja-productos">
-          <h2 className="titulo-formulario">Editar Lote</h2>
+      <div className="form-container">
+        <div className="form-box">
+          <h2 className="form-title">Editar Lote</h2>
           <form>
-            <label className="label-producto">Producto: </label>
-            <select
-              value={idProducto}
-              onChange={(e) => setIdProducto(e.target.value)}
-            >
-              <option value="">Seleccione el producto</option>
-              {productos?.Producto?.map((producto) => (
-                <option key={producto.idProducto} value={producto.idProducto}>
-                  {producto.nombre}
-                </option>
-              ))}
-            </select>
-
-            <label className="label-producto">Nombre del Paquete: </label>
-            <input
-              className="input-producto"
-              type="text"
-              value={nombrePaquete}
-              onChange={(e) => setNombrePaquete(e.target.value)}
-              maxLength={150}
-            />
-
-            <label className="label-producto">Cantidad Total: </label>
-            <input
-              className="input-producto"
-              type="number"
-              value={cantidadTotal}
-              onChange={(e) => setCantidadTotal(e.target.value)}
-              min="0"
-            />
-
-            <label className="label-producto">Precio de Compra: </label>
-            <input
-              className="input-producto"
-              type="number"
-              step="0.01"
-              value={precioCompra}
-              onChange={(e) => setPrecioCompra(e.target.value)}
-              min="0"
-            />
-
-            <label className="label-producto">Precio de Venta: </label>
-            <input
-              className="input-producto"
-              type="number"
-              step="0.01"
-              value={precioVenta}
-              onChange={(e) => setPrecioVenta(e.target.value)}
-              min="0"
-            />
-
-            <div className="modal-botones">
-              <button
-                className="boton-producto btn-cancelar"
-                onClick={(e) => {
-                  e.preventDefault();
-                  irA("/lotes");
-                }}
+            <div className="form-group">
+              <label className="form-label">Producto: </label>
+              <select
+                className="form-select"
+                value={idProducto}
+                onChange={(e) => setIdProducto(e.target.value)}
               >
-                Cancelar
-              </button>
-              <button
-                className="boton-producto"
-                onClick={(e) => {
-                  e.preventDefault();
-                  const lote = {
-                    idProducto: Number(idProducto) || null,
-                    cantidadTotal: Number(cantidadTotal),
-                    precioCompra: Number(precioCompra),
-                    precioVenta: Number(precioVenta),
-                    nombrePaquete,
-                  };
-                  mutate(lote, {
-                    onSuccess: () => {
-                      irA("/lotes");
-                    },
-                  });
-                }}
-              >
-                Guardar Cambios
-              </button>
+                <option value="">Seleccione el producto</option>
+                {productos?.Producto?.map((producto) => (
+                  <option key={producto.idProducto} value={producto.idProducto}>
+                    {producto.nombre}
+                  </option>
+                ))}
+              </select>
             </div>
+
+            <div className="form-group">
+              <label className="form-label">Nombre del Paquete: </label>
+              <input
+                className="form-input"
+                type="text"
+                value={nombrePaquete}
+                onChange={(e) => setNombrePaquete(e.target.value)}
+                maxLength={150}
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Cantidad Total: </label>
+              <input
+                className="form-input"
+                type="number"
+                value={cantidadTotal}
+                onChange={(e) => setCantidadTotal(e.target.value)}
+                min="0"
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Precio de Compra: </label>
+              <input
+                className="form-input"
+                type="number"
+                step="0.01"
+                value={precioCompra}
+                onChange={(e) => setPrecioCompra(e.target.value)}
+                min="0"
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Precio de Venta: </label>
+              <input
+                className="form-input"
+                type="number"
+                step="0.01"
+                value={precioVenta}
+                onChange={(e) => setPrecioVenta(e.target.value)}
+                min="0"
+              />
+            </div>
+
+            <button
+              className="form-btn-primary"
+              onClick={(e) => {
+                e.preventDefault();
+                const lote = {
+                  idProducto: Number(idProducto) || null,
+                  cantidadTotal: Number(cantidadTotal),
+                  precioCompra: Number(precioCompra),
+                  precioVenta: Number(precioVenta),
+                  nombrePaquete,
+                };
+                mutate(lote, {
+                  onSuccess: () => {
+                    irA("/lotes");
+                  },
+                });
+              }}
+            >
+              Guardar Cambios
+            </button>
+            <button
+              className="form-btn-secondary"
+              onClick={(e) => {
+                e.preventDefault();
+                irA("/lotes");
+              }}
+              style={{ backgroundColor: "#6c757d" }}
+            >
+              Cancelar
+            </button>
           </form>
         </div>
       </div>

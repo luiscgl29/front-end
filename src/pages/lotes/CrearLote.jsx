@@ -38,13 +38,14 @@ const CrearLote = () => {
   });
 
   return (
-    <>
-      <div className="productos">
-        <div className="caja-productos">
-          <h2 className="titulo-formulario">Crear Nuevo Lote</h2>
-          <form>
-            <label className="label-producto">Producto: </label>
+    <div className="form-container">
+      <div className="form-box">
+        <h2 className="form-title">Crear Nuevo Lote</h2>
+        <form>
+          <div className="form-group">
+            <label className="form-label">Producto: </label>
             <select
+              className="form-select"
               value={idProducto}
               onChange={(e) => setIdProducto(e.target.value)}
             >
@@ -55,30 +56,36 @@ const CrearLote = () => {
                 </option>
               ))}
             </select>
+          </div>
 
-            <label className="label-producto">Nombre del Paquete: </label>
+          <div className="form-group">
+            <label className="form-label">Nombre del Paquete: </label>
             <input
-              className="input-producto"
+              className="form-input"
               type="text"
               value={nombrePaquete}
               onChange={(e) => setNombrePaquete(e.target.value)}
               placeholder="Ej: Paquete de 12 unidades"
               maxLength={150}
             />
+          </div>
 
-            <label className="label-producto">Cantidad Total: </label>
+          <div className="form-group">
+            <label className="form-label">Cantidad Total: </label>
             <input
-              className="input-producto"
+              className="form-input"
               type="number"
               value={cantidadTotal}
               onChange={(e) => setCantidadTotal(e.target.value)}
               placeholder="Cantidad de unidades en el lote"
               min="1"
             />
+          </div>
 
-            <label className="label-producto">Precio de Compra: </label>
+          <div className="form-group">
+            <label className="form-label">Precio de Compra: </label>
             <input
-              className="input-producto"
+              className="form-input"
               type="number"
               step="0.01"
               value={precioCompra}
@@ -86,10 +93,12 @@ const CrearLote = () => {
               placeholder="0.00"
               min="0"
             />
+          </div>
 
-            <label className="label-producto">Precio de Venta: </label>
+          <div className="form-group">
+            <label className="form-label">Precio de Venta: </label>
             <input
-              className="input-producto"
+              className="form-input"
               type="number"
               step="0.01"
               value={precioVenta}
@@ -97,57 +106,57 @@ const CrearLote = () => {
               placeholder="0.00"
               min="0"
             />
+          </div>
 
-            <button
-              className="boton-producto"
-              onClick={(e) => {
-                e.preventDefault();
-                if (
-                  !idProducto ||
-                  !nombrePaquete ||
-                  !cantidadTotal ||
-                  !precioCompra ||
-                  !precioVenta
-                ) {
-                  alert("Por favor complete todos los campos");
-                  return;
-                }
-                const lote = {
-                  idProducto: Number(idProducto),
-                  cantidadTotal: Number(cantidadTotal),
-                  precioCompra: Number(precioCompra),
-                  precioVenta: Number(precioVenta),
-                  nombrePaquete,
-                };
-                mutate(lote, {
-                  onSuccess: () => {
-                    irA("/lotes");
-                  },
-                  onError: (error) => {
-                    alert(
-                      "Error al crear el lote: " +
-                        (error.response?.data?.mensaje || error.message)
-                    );
-                  },
-                });
-              }}
-            >
-              Crear Lote
-            </button>
-            <button
-              className="boton-producto"
-              onClick={(e) => {
-                e.preventDefault();
-                irA("/lotes");
-              }}
-              style={{ backgroundColor: "#6c757d" }}
-            >
-              Cancelar
-            </button>
-          </form>
-        </div>
+          <button
+            className="form-btn-primary"
+            onClick={(e) => {
+              e.preventDefault();
+              if (
+                !idProducto ||
+                !nombrePaquete ||
+                !cantidadTotal ||
+                !precioCompra ||
+                !precioVenta
+              ) {
+                alert("Por favor complete todos los campos");
+                return;
+              }
+              const lote = {
+                idProducto: Number(idProducto),
+                cantidadTotal: Number(cantidadTotal),
+                precioCompra: Number(precioCompra),
+                precioVenta: Number(precioVenta),
+                nombrePaquete,
+              };
+              mutate(lote, {
+                onSuccess: () => {
+                  irA("/lotes");
+                },
+                onError: (error) => {
+                  alert(
+                    "Error al crear el lote: " +
+                      (error.response?.data?.mensaje || error.message)
+                  );
+                },
+              });
+            }}
+          >
+            Crear Lote
+          </button>
+          <button
+            className="form-btn-secondary"
+            onClick={(e) => {
+              e.preventDefault();
+              irA("/lotes");
+            }}
+            style={{ backgroundColor: "#6c757d" }}
+          >
+            Cancelar
+          </button>
+        </form>
       </div>
-    </>
+    </div>
   );
 };
 
