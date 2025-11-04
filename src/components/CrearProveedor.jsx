@@ -7,6 +7,7 @@ const CrearProveedor = () => {
   const irA = useNavigate();
   const [nombreEmpresa, setNombreEmpresa] = useState("");
   const [telefono, setTelefono] = useState("");
+  const [direccion, setDireccion] = useState("");
 
   useEffect(() => {
     document.title = "Crear Proveedor";
@@ -19,6 +20,7 @@ const CrearProveedor = () => {
         const respuesta = await API.post("/proveedores", {
           nombreEmpresa,
           telefono,
+          direccion,
         });
       } catch (e) {
         console.error(e);
@@ -55,6 +57,16 @@ const CrearProveedor = () => {
               value={telefono}
               onChange={(e) => setTelefono(e.target.value)}
             />
+            <label className="form-label">
+              Ingrese direccion de la empresa:{" "}
+            </label>
+            <input
+              className="form-input"
+              type="text"
+              placeholder="Direccion de la empresa"
+              value={direccion}
+              onChange={(e) => setDireccion(e.target.value)}
+            />
 
             <button
               className="form-btn-primary"
@@ -63,6 +75,7 @@ const CrearProveedor = () => {
                 const proveedores = {
                   nombreEmpresa,
                   telefono,
+                  direccion,
                 };
                 mutate(proveedores);
               }}

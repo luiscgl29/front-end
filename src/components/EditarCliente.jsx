@@ -9,7 +9,6 @@ const EditarCliente = () => {
   const [nombre, setNombre] = useState("");
   const [direccion, setDireccion] = useState("");
   const [telefono, setTelefono] = useState("");
-  const [saldo, setSaldo] = useState("");
   const [nitCliente, setNitCliente] = useState("");
 
   useEffect(() => {
@@ -33,7 +32,6 @@ const EditarCliente = () => {
       setNombre(cliente.nombre || "");
       setDireccion(cliente.direccion || "");
       setTelefono(cliente.telefono || "");
-      setSaldo(cliente.saldo?.toString() || "");
       setNitCliente(cliente.nitCliente || "");
     }
   }, [clienteData]);
@@ -91,15 +89,7 @@ const EditarCliente = () => {
                 onChange={(e) => setTelefono(e.target.value)}
               />
             </div>
-            <div className="form-group">
-              <label className="form-label">Saldo: </label>
-              <input
-                className="form-input"
-                type="text"
-                value={saldo}
-                onChange={(e) => setSaldo(e.target.value)}
-              />
-            </div>
+
             <div className="form-group">
               <label className="form-label">NIT del Cliente: </label>
               <input
@@ -117,7 +107,6 @@ const EditarCliente = () => {
                   nombre,
                   direccion,
                   telefono,
-                  saldo: Number(saldo),
                   nitCliente,
                 };
                 mutate(cliente, {

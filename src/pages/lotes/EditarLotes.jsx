@@ -2,10 +2,13 @@ import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import API from "../../lib/axiosLocal";
+import { useAutentificacion } from "../autentificacion/hookAutentificacion";
 
 const EditarLote = () => {
   const irA = useNavigate();
   const { id } = useParams();
+  // PRUEBA
+  const { data } = useAutentificacion();
   const [idProducto, setIdProducto] = useState("");
   const [cantidadTotal, setCantidadTotal] = useState("");
   const [precioCompra, setPrecioCompra] = useState("");
@@ -145,6 +148,8 @@ const EditarLote = () => {
                   precioCompra: Number(precioCompra),
                   precioVenta: Number(precioVenta),
                   nombrePaquete,
+                  // PRUEBA
+                  usuarioNombre: data?.usuario?.user,
                 };
                 mutate(lote, {
                   onSuccess: () => {

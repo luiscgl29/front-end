@@ -66,7 +66,6 @@ const Clientes = () => {
               <h2>{cliente.nombre}</h2>
               <p className="direccion">{cliente.direccion}</p>
               <p className="telefono">{cliente.telefono}</p>
-              <p className="saldo">Q{cliente.saldo}</p>
               <button
                 className="btn-editar"
                 onClick={() => clienteEditar(cliente)}

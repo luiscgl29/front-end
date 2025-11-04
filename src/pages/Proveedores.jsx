@@ -59,6 +59,7 @@ const Proveedores = () => {
             <article key={proveedor.codProveedor} className="card">
               <h2>{proveedor.nombreEmpresa}</h2>
               <p className="telefono">{proveedor.telefono}</p>
+              <p className="direccion">{proveedor.direccion}</p>
               <button
                 className="btn-editar"
                 onClick={() => proveedorEditar(proveedor)}

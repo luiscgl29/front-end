@@ -8,6 +8,7 @@ const EditarProveedor = () => {
   const { id } = useParams();
   const [nombreEmpresa, setNombreEmpresa] = useState("");
   const [telefono, setTelefono] = useState("");
+  const [direccion, setDireccion] = useState("");
 
   useEffect(() => {
     document.title = "Editar Proveedor";
@@ -29,6 +30,7 @@ const EditarProveedor = () => {
       const proveedor = proveedorData.datosProveedor;
       setNombreEmpresa(proveedor.nombreEmpresa || "");
       setTelefono(proveedor.telefono || "");
+      setDireccion(proveedor.direccion || "");
     }
   }, [proveedorData]);
 
@@ -78,6 +80,16 @@ const EditarProveedor = () => {
                 placeholder="Número de teléfono"
               />
             </div>
+            <div className="form-group">
+              <label className="form-label">Direccion: </label>
+              <input
+                className="form-input"
+                type="text"
+                value={direccion}
+                onChange={(e) => setDireccion(e.target.value)}
+                placeholder="Direccion de la empresa"
+              />
+            </div>
             <button
               className="form-btn-primary"
               onClick={(e) => {
@@ -85,6 +97,7 @@ const EditarProveedor = () => {
                 const proveedor = {
                   nombreEmpresa,
                   telefono,
+                  direccion,
                 };
                 mutate(proveedor, {
                   onSuccess: () => {

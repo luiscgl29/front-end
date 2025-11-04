@@ -1,6 +1,4 @@
-/* ============================================
-   ESTILOS GLOBALES Y RESET
-   ============================================ */
+/* ESTILOS GLOBALES Y RESET */
 * {
   margin: 0;
   padding: 0;
@@ -15,9 +13,8 @@ body {
   background: #f5f7fa;
 }
 
-/* ============================================
-   LAYOUT PRINCIPAL Y SIDEBAR
-   ============================================ */
+/* LAYOUT PRINCIPAL Y SIDEBAR */
+
 .layout {
   display: flex;
   min-height: 100vh;
@@ -88,9 +85,8 @@ body {
   background: #c0392b;
 }
 
-/* ============================================
-   CONTENEDORES PRINCIPALES
-   ============================================ */
+/* CONTENEDORES PRINCIPALES */
+
 .main {
   flex: 1;
   width: 100%;
@@ -107,9 +103,8 @@ body {
   padding: 20px;
 }
 
-/* ============================================
-   HEADERS
-   ============================================ */
+/* HEADERS */
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -149,13 +144,16 @@ body {
   transition: background-color 0.3s;
 }
 
+.btn-reportes-graficos {
+  margin-right: 15px;
+}
+
 .pagina-header button:hover {
   background-color: #1e40af;
 }
 
-/* ============================================
-   BOTONES
-   ============================================ */
+/* BOTONES */
+
 .btn-crear {
   background-color: #2563eb;
   color: white;
@@ -222,9 +220,8 @@ body {
   background-color: #5a6268;
 }
 
-/* ============================================
-   GRIDS Y TARJETAS
-   ============================================ */
+/* GRIDS Y TARJETAS */
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -282,9 +279,8 @@ body {
   margin-top: 0;
 }
 
-/* ============================================
-   ELEMENTOS DE TARJETAS
-   ============================================ */
+/* ELEMENTOS DE TARJETAS */
+
 .descripcion {
   font-size: 14px;
   color: #666;
@@ -332,9 +328,8 @@ body {
   font-weight: 500;
 }
 
-/* ============================================
-   ESTADOS
-   ============================================ */
+/* ESTADOS */
+
 .estado {
   display: inline-block;
   padding: 6px 12px;
@@ -360,9 +355,8 @@ body {
   color: #555;
 }
 
-/* ============================================
-   MODAL
-   ============================================ */
+/* MODAL */
+
 .modal-editar-overlay {
   position: fixed;
   top: 0;
@@ -481,250 +475,7 @@ body {
   background-color: #4b5563;
 }
 
-/* ============================================
-   BUSCADOR
-   ============================================ */
-.buscador {
-  margin-bottom: 20px;
-}
-
-.buscador input {
-  width: 100%;
-  padding: 12px 16px;
-  font-size: 16px;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  outline: none;
-  transition: border-color 0.3s;
-}
-
-.buscador input:focus {
-  border-color: #2563eb;
-}
-
-/* ============================================
-   TABLAS
-   ============================================ */
-.tabla-productos {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.tabla-productos table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.tabla-productos thead {
-  background: #f3f4f6;
-}
-
-.tabla-productos th {
-  padding: 12px;
-  text-align: left;
-  font-weight: 600;
-  color: #374151;
-  border-bottom: 2px solid #e5e7eb;
-}
-
-.tabla-productos td {
-  padding: 12px;
-  border-bottom: 1px solid #e5e7eb;
-  color: #4b5563;
-}
-
-.tabla-productos tr:hover {
-  background: #f9fafb;
-}
-
-.tabla-productos input {
-  width: 80px;
-  padding: 6px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.tabla-productos button {
-  padding: 8px 16px;
-  background: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background 0.3s;
-}
-
-.tabla-productos button:hover {
-  background: #1d4ed8;
-}
-
-/* ============================================
-   CARRITO
-   ============================================ */
-.carrito {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.carrito h2 {
-  font-size: 22px;
-  color: #1f2937;
-  margin-bottom: 15px;
-}
-
-.carrito table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-}
-
-.carrito thead {
-  background: #f3f4f6;
-}
-
-.carrito th {
-  padding: 12px;
-  text-align: left;
-  font-weight: 600;
-  color: #374151;
-  border-bottom: 2px solid #e5e7eb;
-}
-
-.carrito td {
-  padding: 12px;
-  border-bottom: 1px solid #e5e7eb;
-  color: #4b5563;
-}
-
-.carrito button {
-  padding: 6px 12px;
-  background: #ef4444;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: background 0.3s;
-}
-
-.carrito button:hover {
-  background: #dc2626;
-}
-
-/* ============================================
-   TOTALES Y PAGO
-   ============================================ */
-.totales {
-  background: #f9fafb;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-.totales p {
-  display: flex;
-  justify-content: space-between;
-  margin: 8px 0;
-  font-size: 16px;
-  color: #4b5563;
-}
-
-.totales h3 {
-  display: flex;
-  justify-content: space-between;
-  margin: 12px 0 0 0;
-  padding-top: 12px;
-  border-top: 2px solid #e5e7eb;
-  font-size: 20px;
-  color: #16a34a;
-}
-
-.pago {
-  margin-top: 20px;
-}
-
-.pago h3 {
-  font-size: 18px;
-  color: #1f2937;
-  margin-bottom: 15px;
-}
-
-.pago label {
-  display: block;
-  margin-top: 12px;
-  margin-bottom: 6px;
-  font-weight: 600;
-  color: #374151;
-  font-size: 14px;
-}
-
-.pago input,
-.pago select {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 15px;
-  color: #374151;
-  background: white;
-}
-
-.pago input:focus,
-.pago select:focus {
-  outline: none;
-  border-color: #2563eb;
-}
-
-.pago p {
-  margin: 12px 0;
-  font-size: 15px;
-  color: #4b5563;
-}
-
-.pago strong {
-  color: #1f2937;
-  font-size: 18px;
-}
-
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-@media (max-width: 768px) {
-  .layout {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: 100%;
-  }
-
-  .grid,
-  .productos-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-  }
-
-  .tabla-productos,
-  .carrito {
-    overflow-x: auto;
-  }
-}
-
-/* ============================================
-   FORMULARIOS DE CREACIÓN/EDICIÓN - GENÉRICOS
-   ============================================ */
+/* FORMULARIOS DE CREACIÓN/EDICIÓN - GENÉRICOS */
 
 /* Contenedor principal del formulario */
 .form-container {
@@ -983,9 +734,7 @@ body {
   }
 }
 
-/* ============================================
-   PERFIL DE USUARIO EN SIDEBAR
-   ============================================ */
+/* PERFIL DE USUARIO EN SIDEBAR */
 
 /* Contenedor del perfil de usuario */
 .user-profile {
@@ -1215,4 +964,855 @@ body {
   font-size: 20px;
   font-weight: 700;
   color: #2563eb;
+}
+
+/* COMPRAS */
+
+/* MÓDULOS DE COMPRA/VENTA - ESTILOS COMPARTIDOS */
+
+/* Contenedor principal */
+.main-compraventa {
+  flex: 1;
+  width: 100%;
+  background-color: #f5f6fa;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* Header */
+.header-compraventa {
+  margin-bottom: 30px;
+}
+
+.header-compraventa h1 {
+  font-size: 28px;
+  color: #1d4ed8;
+  margin: 0;
+}
+
+/* Buscador */
+.buscador-compraventa {
+  margin-bottom: 20px;
+}
+
+.buscador-compraventa input {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.buscador-compraventa input:focus {
+  border-color: #2563eb;
+}
+
+/* Tabla de productos/lotes */
+.tabla-compraventa {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+.table-compraventa {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-compraventa thead {
+  background-color: #007bff;
+  color: white;
+}
+
+.table-compraventa th {
+  padding: 15px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.table-compraventa tbody tr {
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
+  justify-content: center;
+  align-items: center;
+}
+
+.table-compraventa tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.table-compraventa td {
+  padding: 12px 15px;
+  color: #4b5563;
+  text-align: center;
+}
+
+/* Input de cantidad en tabla */
+.input-cantidad-compraventa {
+  width: 80px;
+  padding: 6px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* Botón agregar al carrito */
+.btn-agregar-compraventa {
+  padding: 8px 16px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.btn-agregar-compraventa:hover {
+  background-color: #218838;
+}
+
+/* Carrito/Resumen */
+.carrito-compraventa {
+  background-color: white;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.carrito-compraventa h2 {
+  font-size: 22px;
+  color: #1f2937;
+  margin-bottom: 20px;
+}
+
+.carrito-compraventa table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.carrito-compraventa thead {
+  background-color: #f3f4f6;
+}
+
+.carrito-compraventa th {
+  padding: 12px;
+  text-align: center;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.carrito-compraventa tbody tr {
+  border-bottom: 1px solid #eee;
+}
+
+.carrito-compraventa td {
+  padding: 12px;
+  color: #4b5563;
+}
+
+/* Botón eliminar del carrito */
+.btn-eliminar-compraventa {
+  padding: 6px 12px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: background-color 0.3s;
+}
+
+.btn-eliminar-compraventa:hover {
+  background-color: #c82333;
+}
+
+/* Totales */
+.totales-compraventa {
+  background: #f9fafb;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.totales-compraventa p {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 0;
+  font-size: 16px;
+  color: #4b5563;
+}
+
+.totales-compraventa h3 {
+  display: flex;
+  justify-content: space-between;
+  margin: 12px 0 0 0;
+  padding-top: 12px;
+  border-top: 2px solid #e5e7eb;
+  font-size: 20px;
+  color: #16a34a;
+}
+
+/* Información de pago/proveedor/cliente */
+.info-pago-compraventa {
+  margin-top: 20px;
+}
+
+.info-pago-compraventa h3 {
+  font-size: 18px;
+  color: #1f2937;
+  margin-bottom: 15px;
+}
+
+.info-pago-compraventa label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #374151;
+  font-size: 14px;
+}
+
+.info-pago-compraventa input[type="date"],
+.info-pago-compraventa input[type="number"],
+.info-pago-compraventa input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 15px;
+  color: #374151;
+  background: white;
+}
+
+.info-pago-compraventa input:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+.info-pago-compraventa p {
+  margin: 12px 0;
+  font-size: 15px;
+  color: #4b5563;
+}
+
+.info-pago-compraventa strong {
+  color: #1f2937;
+  font-size: 18px;
+}
+
+/* Botón principal (registrar compra/venta) */
+.btn-principal-compraventa {
+  width: 100%;
+  padding: 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 20px;
+}
+
+.btn-principal-compraventa:hover {
+  background-color: #0056b3;
+}
+
+.btn-principal-compraventa:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Botón crear (proveedor/cliente) */
+.btn-crear-compraventa {
+  padding: 8px 16px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background-color 0.3s;
+}
+
+.btn-crear-compraventa:hover {
+  background-color: #218838;
+}
+
+/* MODAL COMPRA/VENTA */
+
+.modal-overlay-compraventa {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content-compraventa {
+  background-color: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  animation: modalFadeIn 0.3s ease-in-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-header-compraventa {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 25px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.modal-header-compraventa h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #28a745;
+}
+
+.modal-close-compraventa {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #999;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.modal-close-compraventa:hover {
+  color: #333;
+}
+
+.modal-body-compraventa {
+  padding: 25px;
+}
+
+.modal-body-compraventa label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.modal-input-compraventa {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  transition: border-color 0.3s;
+}
+
+.modal-input-compraventa:focus {
+  outline: none;
+  border-color: #28a745;
+}
+
+.modal-footer-compraventa {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 20px 25px;
+  border-top: 1px solid #dee2e6;
+}
+
+.btn-cancelar-modal-compraventa {
+  padding: 10px 20px;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.btn-cancelar-modal-compraventa:hover {
+  background-color: #5a6268;
+}
+
+.btn-guardar-modal-compraventa {
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.btn-guardar-modal-compraventa:hover {
+  background-color: #218838;
+}
+
+.btn-guardar-modal-compraventa:disabled {
+  background-color: #94d3a2;
+  cursor: not-allowed;
+}
+
+/* RESPONSIVE COMPRA/VENTA */
+
+@media (max-width: 768px) {
+  .tabla-compraventa,
+  .carrito-compraventa table {
+    font-size: 0.9rem;
+  }
+
+  .modal-content-compraventa {
+    width: 95%;
+    margin: 20px;
+  }
+}
+
+/* ------------------------- */
+
+.card-header-venta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: -18px -18px 15px -18px;
+  padding: 12px 18px;
+  background-color: #2563eb;
+  border-radius: 12px 12px 0 0;
+}
+
+.card-header-venta h2 {
+  font-size: 18px;
+  color: white;
+  margin: 0;
+  font-weight: 600;
+}
+
+.date-badge-venta {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.venta-info-section {
+  margin-bottom: 12px;
+}
+
+.venta-info-section .descripcion {
+  font-size: 14px;
+  color: #4b5563;
+  margin-bottom: 6px;
+}
+
+.venta-productos-titulo {
+  font-size: 15px;
+  color: #1f2937;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.details-list-venta {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+  padding: 0;
+}
+
+.detail-item-venta {
+  padding: 10px 12px;
+  background: white;
+  margin-bottom: 0;
+}
+
+.divider-producto {
+  height: 1px;
+  background-color: #e5e7eb;
+  margin: 0;
+}
+
+.detail-producto-nombre {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 6px;
+}
+
+.detail-cantidad-precio {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.detail-descuento {
+  font-size: 12px;
+  color: #dc2626;
+  margin-bottom: 4px;
+}
+
+.detail-subtotal {
+  font-size: 13px;
+  font-weight: 600;
+  color: #16a34a;
+  text-align: right;
+  margin-top: 4px;
+}
+
+.venta-totales {
+  border-top: 2px solid #e5e7eb;
+  padding-top: 12px;
+}
+
+.venta-iva {
+  display: flex;
+  justify-content: space-between;
+  font-size: 15px;
+  color: #4b5563;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.venta-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 18px;
+  color: #1f2937;
+  font-weight: 700;
+}
+
+.venta-total span:last-child {
+  color: #2563eb;
+}
+
+/*Graficos */
+/* Estilos para gráficos */
+
+.pagina-graficos {
+  width: 100%;
+}
+
+.header-graficos {
+  margin-bottom: 2rem;
+}
+
+.header-graficos h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+/* Grid de métricas */
+.metricas-graficos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.card-metrica {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-metrica h3 {
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+}
+
+.valor-metrica {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0.5rem 0;
+}
+
+.card-metrica.ventas .valor-metrica {
+  color: #3b82f6;
+}
+
+.card-metrica.compras .valor-metrica {
+  color: #10b981;
+}
+
+.card-metrica.clientes .valor-metrica {
+  color: #8b5cf6;
+}
+
+.card-metrica.stock .valor-metrica.alerta {
+  color: #ef4444;
+}
+
+.detalle-metrica {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+.cambio-metrica {
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
+
+.cambio-metrica.positivo {
+  color: #10b981;
+}
+
+.cambio-metrica.negativo {
+  color: #ef4444;
+}
+
+/* Cards de gráficos */
+.card-grafico {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.header-card-grafico {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.header-card-grafico h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.contenedor-grafico {
+  width: 100%;
+}
+
+/* Grid doble de gráficos */
+.grid-graficos-doble {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* Card de tabla */
+.card-tabla {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-tabla h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 1.5rem 0;
+}
+
+.contenedor-tabla {
+  overflow-x: auto;
+}
+
+.tabla-datos {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla-datos thead {
+  background-color: #f9fafb;
+}
+
+.tabla-datos th {
+  padding: 0.75rem 1.5rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.tabla-datos td {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.875rem;
+}
+
+.tabla-datos tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+.nombre-empleado {
+  font-weight: 500;
+  color: #111827;
+}
+
+.valor-monto {
+  font-family: "Courier New", monospace;
+}
+
+.sin-resultados {
+  text-align: center;
+  color: #6b7280;
+  padding: 2rem;
+}
+
+.estado-carga {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: 1.25rem;
+  color: #6b7280;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .grid-graficos-doble {
+    grid-template-columns: 1fr;
+  }
+
+  .metricas-graficos {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* LOGIN */
+
+.login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f5f6fa;
+  padding: 20px;
+}
+
+.caja-form {
+  background: white;
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+}
+
+.h1-Inicio {
+  font-size: 28px;
+  color: #1d4ed8;
+  margin-bottom: 30px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.label-form {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-top: 15px;
+  margin-bottom: 8px;
+}
+
+.input-form {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 15px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input-form:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.boton-form {
+  width: 100%;
+  padding: 14px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 25px;
+  transition: background-color 0.3s;
+}
+
+.boton-form:hover {
+  background-color: #1e40af;
+}
+
+.no-autorizado-simple {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f5f6fa;
+  padding: 20px;
+  text-align: center;
+}
+
+.no-autorizado-simple h1 {
+  font-size: 32px;
+  color: #1d4ed8;
+  margin-bottom: 30px;
+}
+
+.link-login-simple {
+  padding: 12px 24px;
+  background-color: #2563eb;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.link-login-simple:hover {
+  background-color: #1e40af;
 }

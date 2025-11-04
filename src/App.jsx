@@ -22,7 +22,9 @@ import ReportesVentas from "./pages/reportes/ReportesVentas.jsx";
 import Lotes from "./pages/lotes/Lotes.jsx";
 import CrearLote from "./pages/lotes/CrearLote.jsx";
 import EditarLote from "./pages/lotes/EditarLotes.jsx";
+import Graficos from "./pages/Graficos.jsx";
 import { Route, Routes } from "react-router-dom";
+import GraficosMayoristas from "./pages/GraficosMayoristas.jsx";
 
 function App() {
   return (
@@ -37,6 +39,8 @@ function App() {
           {/* reportes */}
           <Route path="reportes/ventas" element={<ReportesVentas />} />
           <Route path="reportes/compras" element={<ReportesCompras />} />
+          <Route path="graficosMinoristas" element={<Graficos />} />
+          <Route path="graficosMayoristas" element={<GraficosMayoristas />} />
         </Route>
         <Route element={<AccesosBodeguero />}>
           {/* Lotes */}

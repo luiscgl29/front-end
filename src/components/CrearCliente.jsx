@@ -8,7 +8,6 @@ const CrearCliente = () => {
   const [nombre, setNombre] = useState("");
   const [direccion, setDireccion] = useState("");
   const [telefono, setTelefono] = useState("");
-  const [saldo, setSaldo] = useState("");
   const [nitCliente, setNitCliente] = useState("");
   useEffect(() => {
     document.title = "Crear Cliente";
@@ -64,14 +63,6 @@ const CrearCliente = () => {
               value={telefono}
               onChange={(e) => setTelefono(e.target.value)}
             />
-            <label className="form-label">Ingrese el saldo del Cliente </label>
-            <input
-              className="form-input"
-              type="text"
-              placeholder="Saldo del Cliente"
-              value={saldo}
-              onChange={(e) => setSaldo(e.target.value)}
-            />
             <label className="form-label">Ingrese el NIT del Cliente</label>
             <input
               className="form-input"
@@ -88,7 +79,6 @@ const CrearCliente = () => {
                   nombre,
                   direccion,
                   telefono,
-                  saldo,
                   nitCliente,
                 };
                 mutate(clientes);

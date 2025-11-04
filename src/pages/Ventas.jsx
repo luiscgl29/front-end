@@ -14,14 +14,12 @@ const Ventas = () => {
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
   const [mostrarLotes, setMostrarLotes] = useState(false);
 
-  // Estados para el formulario de crear cliente
-  const [mostrarFormCliente, setMostrarFormCliente] = useState(false);
+  const [mostrarModal, setMostrarModal] = useState(false);
   const [nuevoCliente, setNuevoCliente] = useState({
     nombre: "",
     nitCliente: "",
     telefono: "",
     direccion: "",
-    saldo: 0,
   });
 
   // --- Consultar clientes ---
@@ -61,13 +59,12 @@ const Ventas = () => {
     onSuccess: (data) => {
       alert("✅ Cliente creado con éxito.");
       queryClient.invalidateQueries(["clientes"]);
-      setMostrarFormCliente(false);
+      setMostrarModal(false);
       setNuevoCliente({
         nombre: "",
         nitCliente: "",
         telefono: "",
         direccion: "",
-        saldo: 0,
       });
       // Seleccionar automáticamente el cliente recién creado
       if (data.cliente) {
@@ -109,13 +106,19 @@ const Ventas = () => {
         alert("No hay suficiente stock disponible.");
         return;
       }
+      // Recalcular con nueva cantidad
+      const subtotalItem = nuevaCantidad * Number(producto.precioVenta);
+      const ivaItem = subtotalItem * 0.12;
+      const totalItem = subtotalItem + ivaItem;
+
       setCarrito(
         carrito.map((p) =>
           p.idProducto === producto.idProducto
             ? {
                 ...p,
                 cantidad: nuevaCantidad,
-                montoTotal: nuevaCantidad * p.precioUnitario,
+                ivaProducto: ivaItem,
+                montoTotal: totalItem,
               }
             : p
         )
@@ -125,6 +128,11 @@ const Ventas = () => {
         alert("No hay suficiente stock disponible.");
         return;
       }
+      // Calcular IVA para nuevo item
+      const subtotalItem = cantidad * Number(producto.precioVenta);
+      const ivaItem = subtotalItem * 0.12;
+      const totalItem = subtotalItem + ivaItem;
+
       setCarrito([
         ...carrito,
         {
@@ -133,7 +141,8 @@ const Ventas = () => {
           nombre: producto.nombre,
           cantidad,
           precioUnitario: Number(producto.precioVenta),
-          montoTotal: cantidad * Number(producto.precioVenta),
+          ivaProducto: ivaItem,
+          montoTotal: totalItem,
           tipo: "producto",
         },
       ]);
@@ -142,33 +151,95 @@ const Ventas = () => {
 
   // --- Agregar lote al carrito ---
   const agregarLote = (lote, cantidad) => {
+    // Calcular cuántas unidades individuales se necesitan
+    const unidadesNecesarias = cantidad * (lote.cantidadTotal || 0);
+
+    // Verificar stock disponible del producto base
+    const productoBase = productos.find(
+      (p) => p.idProducto === lote.idProducto
+    );
+    const stockDisponible = productoBase?.cantidadDisponible || 0;
+
+    // Calcular cuántas unidades ya están en el carrito para este producto
+    const unidadesEnCarrito = carrito
+      .filter((item) => {
+        // Si es el mismo lote
+        if (item.idLote === lote.idLote) return false;
+        // Si es otro lote del mismo producto o el producto individual
+        return (
+          item.idProducto === lote.idProducto ||
+          (item.idLote && item.idProductoBase === lote.idProducto)
+        );
+      })
+      .reduce((total, item) => {
+        if (item.tipo === "lote") {
+          const loteItem = lotes.find((l) => l.idLote === item.idLote);
+          return total + item.cantidad * (loteItem?.cantidadTotal || 0);
+        }
+        return total + item.cantidad;
+      }, 0);
+
     const existente = carrito.find((p) => p.idLote === lote.idLote);
+    const cantidadActualEnCarrito = existente
+      ? existente.cantidad * (lote.cantidadTotal || 0)
+      : 0;
+
+    // Verificar si hay suficiente stock
+    const stockRestante = stockDisponible - unidadesEnCarrito;
+    if (unidadesNecesarias > stockRestante) {
+      const lotesDisponibles = Math.floor(
+        stockRestante / (lote.cantidadTotal || 1)
+      );
+      alert(
+        `⚠️ Stock insuficiente!\n\n` +
+          `Necesitas: ${unidadesNecesarias} unidades de ${
+            productoBase?.nombre || "producto"
+          }\n` +
+          `Disponible: ${stockRestante} unidades\n` +
+          `Máximo de lotes que puedes agregar: ${lotesDisponibles}`
+      );
+      return;
+    }
+
     if (existente) {
       const nuevaCantidad = existente.cantidad + cantidad;
+      // Recalcular con nueva cantidad
+      const subtotalItem = nuevaCantidad * Number(lote.precioVenta);
+      const ivaItem = subtotalItem * 0.12;
+      const totalItem = subtotalItem + ivaItem;
+
       setCarrito(
         carrito.map((p) =>
           p.idLote === lote.idLote
             ? {
                 ...p,
                 cantidad: nuevaCantidad,
-                montoTotal: nuevaCantidad * p.precioUnitario,
+                ivaProducto: ivaItem,
+                montoTotal: totalItem,
               }
             : p
         )
       );
     } else {
+      // Calcular IVA para nuevo lote
+      const subtotalItem = cantidad * Number(lote.precioVenta);
+      const ivaItem = subtotalItem * 0.12;
+      const totalItem = subtotalItem + ivaItem;
+
       setCarrito([
         ...carrito,
         {
-          idProducto: null,
+          idProducto: null, // NO enviar idProducto en ventas por lote
           idLote: lote.idLote,
           nombre: `${lote.nombrePaquete} (${
             lote.producto?.nombre || "Sin nombre"
           })`,
           cantidad,
           precioUnitario: Number(lote.precioVenta),
-          montoTotal: cantidad * Number(lote.precioVenta),
+          ivaProducto: ivaItem,
+          montoTotal: totalItem,
           tipo: "lote",
+          idProductoBase: lote.idProducto, // Solo para validaciones de stock
         },
       ]);
     }
@@ -184,8 +255,15 @@ const Ventas = () => {
   };
 
   // --- Calcular totales ---
-  const subtotal = carrito.reduce((acc, p) => acc + p.montoTotal, 0);
-  const iva = subtotal * 0.12;
+  const subtotal = carrito.reduce((acc, p) => {
+    // El subtotal es sin IVA
+    return acc + p.cantidad * p.precioUnitario;
+  }, 0);
+
+  const iva = carrito.reduce((acc, p) => {
+    return acc + (p.ivaProducto || 0);
+  }, 0);
+
   const total = subtotal + iva;
 
   const efectivoIngresado = Number(efectivoRecibido) || 0;
@@ -207,6 +285,8 @@ const Ventas = () => {
           idLote: p.idLote,
           cantidad: p.cantidad,
           precioUnitario: p.precioUnitario,
+          ivaProducto: p.ivaProducto,
+          descuento: 0,
           montoTotal: p.montoTotal,
         })),
       };
@@ -219,6 +299,8 @@ const Ventas = () => {
       setCarrito([]);
       setEfectivoRecibido("");
       setClienteSeleccionado(null);
+      queryClient.invalidateQueries(["productos"]);
+      queryClient.invalidateQueries(["lotes"]);
     },
     onError: (err) => {
       const mensajeError =
@@ -243,7 +325,7 @@ const Ventas = () => {
     cargandoClientes ||
     (mostrarLotes && cargandoLotes)
   ) {
-    return <h1>Cargando datos...</h1>;
+    return <h1 className="loading">Cargando datos...</h1>;
   }
 
   // --- Filtro de búsqueda ---
@@ -261,26 +343,37 @@ const Ventas = () => {
 
   return (
     <>
-      <main className="main">
-        <header className="header">
+      <main className="main-compraventa">
+        <header className="header-compraventa">
           <h1>Registrar Venta</h1>
         </header>
 
-        {/* TOGGLE PRODUCTOS/LOTES */}
-        <div className="buscador">
-          <label style={{ marginRight: "20px", fontSize: "16px" }}>
+        <div className="buscador-compraventa">
+          <label
+            style={{
+              display: "flex",
+              alignItems: "center",
+              fontSize: "16px",
+              fontWeight: "600",
+            }}
+          >
             <input
               type="checkbox"
               checked={mostrarLotes}
               onChange={(e) => handleToggleLotes(e.target.checked)}
-              style={{ marginRight: "8px" }}
+              style={{
+                marginRight: "8px",
+                width: "18px",
+                height: "18px",
+                cursor: "pointer",
+              }}
             />
             Venta al mayoreo
           </label>
         </div>
 
         {/* BUSCADOR */}
-        <div className="buscador">
+        <div className="buscador-compraventa">
           <input
             type="text"
             placeholder={
@@ -292,8 +385,8 @@ const Ventas = () => {
         </div>
 
         {/* LISTADO PRODUCTOS O LOTES */}
-        <section className="tabla-productos">
-          <table>
+        <section className="tabla-compraventa">
+          <table className="table-compraventa">
             <thead>
               <tr>
                 <th>{mostrarLotes ? "ID Lote" : "Código"}</th>
@@ -321,10 +414,12 @@ const Ventas = () => {
                           min="1"
                           defaultValue="1"
                           id={`cant-lote-${l.idLote}`}
+                          className="input-cantidad-compraventa"
                         />
                       </td>
                       <td>
                         <button
+                          className="btn-agregar-compraventa"
                           onClick={() =>
                             agregarLote(
                               l,
@@ -335,7 +430,7 @@ const Ventas = () => {
                             )
                           }
                         >
-                          🛒 Agregar
+                          ➕ Agregar
                         </button>
                       </td>
                     </tr>
@@ -353,10 +448,12 @@ const Ventas = () => {
                           max={p.cantidadDisponible}
                           defaultValue="1"
                           id={`cant-${p.idProducto}`}
+                          className="input-cantidad-compraventa"
                         />
                       </td>
                       <td>
                         <button
+                          className="btn-agregar-compraventa"
                           onClick={() =>
                             agregarProducto(
                               p,
@@ -367,7 +464,7 @@ const Ventas = () => {
                             )
                           }
                         >
-                          🛒 Agregar
+                          ➕ Agregar
                         </button>
                       </td>
                     </tr>
@@ -377,15 +474,16 @@ const Ventas = () => {
         </section>
 
         {/* CARRITO */}
-        <section className="carrito">
+        <section className="carrito-compraventa">
           <h2>{mostrarLotes ? "Lotes Agregados" : "Productos Agregados"}</h2>
-          <table>
+          <table className="table-compraventa">
             <thead>
               <tr>
                 <th>Código</th>
                 <th>Nombre</th>
                 <th>Cantidad</th>
                 <th>Precio</th>
+                <th>IVA</th>
                 <th>Total</th>
                 <th>Acción</th>
               </tr>
@@ -400,10 +498,18 @@ const Ventas = () => {
                   <td>{item.idProducto || item.idLote}</td>
                   <td>{item.nombre}</td>
                   <td>{item.cantidad}</td>
-                  <td>Q. {item.precioUnitario.toFixed(2)}</td>
-                  <td>Q. {item.montoTotal.toFixed(2)}</td>
+                  <td className="precio-compraventa">
+                    Q. {item.precioUnitario.toFixed(2)}
+                  </td>
+                  <td className="precio-compraventa">
+                    Q. {(item.ivaProducto || 0).toFixed(2)}
+                  </td>
+                  <td className="precio-compraventa">
+                    Q. {item.montoTotal.toFixed(2)}
+                  </td>
                   <td>
                     <button
+                      className="btn-eliminar-compraventa"
                       onClick={() =>
                         eliminarItem(item.idProducto || item.idLote, item.tipo)
                       }
@@ -416,13 +522,13 @@ const Ventas = () => {
             </tbody>
           </table>
 
-          <div className="totales">
+          <div className="totales-compraventa">
             <p>Subtotal: Q. {subtotal.toFixed(2)}</p>
             <p>IVA (12%): Q. {iva.toFixed(2)}</p>
             <h3>Total: Q. {total.toFixed(2)}</h3>
           </div>
 
-          <div className="pago">
+          <div className="info-pago-compraventa">
             <h3>Información del Cliente</h3>
 
             <label htmlFor="selectCliente">Seleccionar Cliente:</label>
@@ -440,123 +546,18 @@ const Ventas = () => {
               </div>
               <button
                 type="button"
-                onClick={() => setMostrarFormCliente(!mostrarFormCliente)}
-                style={{
-                  padding: "8px 16px",
-                  backgroundColor: mostrarFormCliente ? "#6c757d" : "#28a745",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "4px",
-                  cursor: "pointer",
-                  whiteSpace: "nowrap",
-                }}
+                onClick={() => setMostrarModal(true)}
+                className="btn-crear-compraventa"
               >
-                {mostrarFormCliente ? "❌ Cancelar" : "➕ Crear Cliente"}
+                ➕ Crear Cliente
               </button>
             </div>
 
-            {/* FORMULARIO CREAR CLIENTE */}
-            {mostrarFormCliente && (
-              <div
-                style={{
-                  marginBottom: "20px",
-                  padding: "15px",
-                  border: "2px solid #28a745",
-                  borderRadius: "8px",
-                  backgroundColor: "#f8f9fa",
-                }}
-              >
-                <h4 style={{ marginTop: 0, color: "#28a745" }}>
-                  Nuevo Cliente
-                </h4>
-
-                <label htmlFor="nuevoNombre">Nombre Completo: *</label>
-                <input
-                  id="nuevoNombre"
-                  type="text"
-                  placeholder="Nombre del cliente"
-                  value={nuevoCliente.nombre}
-                  onChange={(e) =>
-                    setNuevoCliente({ ...nuevoCliente, nombre: e.target.value })
-                  }
-                  required
-                />
-
-                <label htmlFor="nuevoNit">NIT:</label>
-                <input
-                  id="nuevoNit"
-                  type="text"
-                  placeholder="NIT del cliente (opcional)"
-                  value={nuevoCliente.nitCliente}
-                  onChange={(e) =>
-                    setNuevoCliente({
-                      ...nuevoCliente,
-                      nitCliente: e.target.value,
-                    })
-                  }
-                />
-
-                <label htmlFor="nuevoTelefono">Teléfono:</label>
-                <input
-                  id="nuevoTelefono"
-                  type="tel"
-                  placeholder="Número de teléfono"
-                  value={nuevoCliente.telefono}
-                  onChange={(e) =>
-                    setNuevoCliente({
-                      ...nuevoCliente,
-                      telefono: e.target.value,
-                    })
-                  }
-                />
-
-                <label htmlFor="nuevaDireccion">Dirección:</label>
-                <input
-                  id="nuevaDireccion"
-                  type="text"
-                  placeholder="Dirección completa"
-                  value={nuevoCliente.direccion}
-                  onChange={(e) =>
-                    setNuevoCliente({
-                      ...nuevoCliente,
-                      direccion: e.target.value,
-                    })
-                  }
-                />
-
-                <label htmlFor="nuevoSaldo">Saldo Inicial:</label>
-                <input
-                  id="nuevoSaldo"
-                  type="number"
-                  step="0.01"
-                  placeholder="0.00"
-                  value={nuevoCliente.saldo}
-                  onChange={(e) =>
-                    setNuevoCliente({ ...nuevoCliente, saldo: e.target.value })
-                  }
-                />
-
-                <button
-                  type="button"
-                  onClick={handleCrearCliente}
-                  style={{
-                    width: "100%",
-                    padding: "10px",
-                    backgroundColor: "#28a745",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontWeight: "bold",
-                    marginTop: "10px",
-                  }}
-                >
-                  💾 Guardar Cliente
-                </button>
-              </div>
-            )}
-
-            <p style={{ marginTop: "20px" }}>Tipo de Pago: **Efectivo**</p>
+            <p
+              style={{ marginTop: "20px", fontSize: "15px", color: "#4b5563" }}
+            >
+              Tipo de Pago: <strong>Efectivo</strong>
+            </p>
 
             <label htmlFor="efectivoRecibido">Efectivo Recibido:</label>
             <input
@@ -574,7 +575,7 @@ const Ventas = () => {
           </div>
 
           <button
-            className="btn-venta"
+            className="btn-principal-compraventa"
             disabled={carrito.length === 0 || total === 0}
             onClick={() => mutationVenta.mutate()}
           >
@@ -582,6 +583,111 @@ const Ventas = () => {
           </button>
         </section>
       </main>
+
+      {/* MODAL CREAR CLIENTE */}
+      {mostrarModal && (
+        <div
+          className="modal-overlay-compraventa"
+          onClick={() => setMostrarModal(false)}
+        >
+          <div
+            className="modal-content-compraventa"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header-compraventa">
+              <h2>Nuevo Cliente</h2>
+              <button
+                className="modal-close-compraventa"
+                onClick={() => setMostrarModal(false)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="modal-body-compraventa">
+              <label htmlFor="nuevoNombre">Nombre Completo *</label>
+              <input
+                id="nuevoNombre"
+                type="text"
+                placeholder="Nombre del cliente"
+                value={nuevoCliente.nombre}
+                onChange={(e) =>
+                  setNuevoCliente({ ...nuevoCliente, nombre: e.target.value })
+                }
+                maxLength={100}
+                required
+                className="modal-input-compraventa"
+              />
+
+              <label htmlFor="nuevoNit">NIT (opcional)</label>
+              <input
+                id="nuevoNit"
+                type="text"
+                placeholder="NIT del cliente"
+                value={nuevoCliente.nitCliente}
+                onChange={(e) =>
+                  setNuevoCliente({
+                    ...nuevoCliente,
+                    nitCliente: e.target.value,
+                  })
+                }
+                maxLength={20}
+                className="modal-input-compraventa"
+              />
+
+              <label htmlFor="nuevoTelefono">Teléfono (opcional)</label>
+              <input
+                id="nuevoTelefono"
+                type="tel"
+                placeholder="Número de teléfono"
+                value={nuevoCliente.telefono}
+                onChange={(e) =>
+                  setNuevoCliente({
+                    ...nuevoCliente,
+                    telefono: e.target.value,
+                  })
+                }
+                maxLength={15}
+                className="modal-input-compraventa"
+              />
+
+              <label htmlFor="nuevaDireccion">Dirección (opcional)</label>
+              <input
+                id="nuevaDireccion"
+                type="text"
+                placeholder="Dirección completa"
+                value={nuevoCliente.direccion}
+                onChange={(e) =>
+                  setNuevoCliente({
+                    ...nuevoCliente,
+                    direccion: e.target.value,
+                  })
+                }
+                maxLength={200}
+                className="modal-input-compraventa"
+              />
+            </div>
+
+            <div className="modal-footer-compraventa">
+              <button
+                type="button"
+                onClick={() => setMostrarModal(false)}
+                className="btn-cancelar-modal-compraventa"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleCrearCliente}
+                disabled={mutationCrearCliente.isPending}
+                className="btn-guardar-modal-compraventa"
+              >
+                {mutationCrearCliente.isPending ? "Guardando..." : "💾 Guardar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

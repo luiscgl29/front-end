@@ -14,11 +14,7 @@ const ListarCompras = () => {
   });
 
   if (isLoading) {
-    return (
-      <div className="loading-container">
-        <h2>Cargando compras...</h2>
-      </div>
-    );
+    return <h1 className="loading">Cargando compras...</h1>;
   }
 
   if (error) {
@@ -36,7 +32,16 @@ const ListarCompras = () => {
     }`.toLowerCase();
     const proveedor = compra.proveedor?.nombreEmpresa?.toLowerCase() || "";
     const idCompra = compra.idCompra.toString();
-    const fecha = new Date(compra.fecha).toLocaleDateString();
+    const fechaEspecifica = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    const fecha = new Date(compra.fecha).toLocaleDateString(
+      "es",
+      fechaEspecifica
+    );
     const termino = busqueda.toLowerCase();
 
     return (
@@ -48,8 +53,8 @@ const ListarCompras = () => {
   });
 
   return (
-    <div className="page-container">
-      <header className="page-header">
+    <main className="pagina-container">
+      <header className="pagina-header">
         <h1>Historial de Compras</h1>
         <input
           type="text"
@@ -60,18 +65,18 @@ const ListarCompras = () => {
         />
       </header>
 
-      <div className="grid-container">
+      <section className="productos-grid">
         {comprasFiltradas.length === 0 ? (
           <div className="no-results">
             <p>No se encontraron compras</p>
           </div>
         ) : (
           comprasFiltradas.map((compra) => (
-            <div key={compra.idCompra} className="card">
-              <div className="card-header compra-header">
-                <h3 className="card-title">Compra #{compra.idCompra}</h3>
-                <span className="date-badge">
-                  {new Date(compra.fecha).toLocaleDateString("es-GT", {
+            <article key={compra.idCompra} className="producto-card">
+              <div className="card-header-venta">
+                <h2>Compra #{compra.idCompra}</h2>
+                <span className="date-badge-venta">
+                  {new Date(compra.fecha).toLocaleDateString("es", {
                     year: "numeric",
                     month: "short",
                     day: "numeric",
@@ -79,74 +84,68 @@ const ListarCompras = () => {
                 </span>
               </div>
 
-              <div className="card-body">
-                <div className="info-row">
-                  <span className="label">Empleado:</span>
-                  <span className="value">
-                    {compra.usuario?.nombre || "N/A"}{" "}
-                    {compra.usuario?.apellido || ""}
-                  </span>
+              <div className="venta-info-section">
+                <div className="descripcion">
+                  <strong>Empleado:</strong> {compra.usuario?.nombre || "N/A"}{" "}
+                  {compra.usuario?.apellido || ""}
                 </div>
 
-                <div className="info-row">
-                  <span className="label">Proveedor:</span>
-                  <span className="value">
-                    {compra.proveedor?.nombreEmpresa || "N/A"}
-                  </span>
+                <div className="descripcion">
+                  <strong>Proveedor:</strong>{" "}
+                  {compra.proveedor?.nombreEmpresa || "N/A"}
                 </div>
 
                 {compra.proveedor?.telefono && (
-                  <div className="info-row">
-                    <span className="label">Teléfono:</span>
-                    <span className="value">{compra.proveedor.telefono}</span>
+                  <div className="descripcion">
+                    <strong>Teléfono:</strong> {compra.proveedor.telefono}
                   </div>
                 )}
+              </div>
 
-                <div className="divider"></div>
+              <div className="venta-productos-titulo">
+                <strong>Detalles de Compra</strong>
+              </div>
 
-                <div className="details-header">
-                  <h4>Detalles de Compra</h4>
-                </div>
-
-                <div className="details-container">
-                  {compra.compradetalle?.map((detalle) => (
-                    <div key={detalle.idCompraDetalle} className="detail-item">
-                      <div className="detail-info">
-                        <span className="item-badge">
-                          Lote #{detalle.idLote}
-                        </span>
-                        <div className="detail-stats">
-                          <span>Cantidad: {detalle.cantidadComprada}</span>
-                          <span>
-                            Precio: Q {Number(detalle.precioCompra).toFixed(2)}
-                          </span>
-                        </div>
+              <div className="details-list-venta">
+                {compra.compradetalle?.map((detalle, index) => (
+                  <div key={detalle.idCompraDetalle}>
+                    <div className="detail-item-venta">
+                      <div className="detail-producto-nombre">
+                        {detalle.lote?.producto?.nombre ||
+                          `Lote #${detalle.idLote}`}
                       </div>
-                      <div className="detail-total">
-                        Q{" "}
+                      <div className="detail-cantidad-precio">
+                        <span>Cantidad: {detalle.cantidadComprada}</span>
+                        <span>
+                          Precio: Q {Number(detalle.precioCompra).toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="detail-subtotal">
+                        Subtotal: Q{" "}
                         {(
                           Number(detalle.precioCompra) *
                           detalle.cantidadComprada
                         ).toFixed(2)}
                       </div>
                     </div>
-                  ))}
-                </div>
+                    {index < compra.compradetalle.length - 1 && (
+                      <div className="divider-producto"></div>
+                    )}
+                  </div>
+                ))}
+              </div>
 
-                <div className="divider"></div>
-
-                <div className="total-row">
-                  <span className="total-label">Total Compra:</span>
-                  <span className="total-value compra-total">
-                    Q {Number(compra.totalCompra).toFixed(2)}
-                  </span>
+              <div className="venta-totales">
+                <div className="venta-total">
+                  <span>Total:</span>
+                  <span>Q {Number(compra.totalCompra).toFixed(2)}</span>
                 </div>
               </div>
-            </div>
+            </article>
           ))
         )}
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };
 
